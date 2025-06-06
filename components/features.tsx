@@ -1,27 +1,41 @@
 "use client";
 
-import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
-import { 
-  Camera, 
-  Video, 
-  Printer, 
-  Save, 
-  Pencil, 
-  Settings, 
-  Share, 
-  Keyboard 
-} from 'lucide-react';
+import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
+import {
+  Camera,
+  Video,
+  Printer,
+  Save,
+  Pencil,
+  Settings,
+  Share,
+  Keyboard,
+} from "lucide-react";
 
 const features = [
   {
+    title: "Video Conferencing",
+    description:
+      "Host or join video meetings with multiple participants, just like Zoom or Google Meet.",
+    icon: Video,
+  },
+  {
+    title: "Screen Sharing",
+    description:
+      "Share your screen during video calls with crystal clear quality.",
+    icon: Share,
+  },
+  {
     title: "Screenshot Capture",
-    description: "Capture any area of your screen with customizable selection tools.",
+    description:
+      "Capture any area of your screen with customizable selection tools.",
     icon: Camera,
   },
   {
     title: "Screen Recording",
-    description: "Record your screen with audio for tutorials, presentations, and more.",
+    description:
+      "Record your screen with audio for tutorials, presentations, and more.",
     icon: Video,
   },
   {
@@ -31,7 +45,8 @@ const features = [
   },
   {
     title: "Media Library",
-    description: "Access all your captures and recordings in one organized place.",
+    description:
+      "Access all your captures and recordings in one organized place.",
     icon: Save,
   },
   {
@@ -41,18 +56,9 @@ const features = [
   },
   {
     title: "Custom Settings",
-    description: "Configure quality, format, and capture options to fit your needs.",
+    description:
+      "Configure quality, format, and capture options to fit your needs.",
     icon: Settings,
-  },
-  {
-    title: "Share Options",
-    description: "Instantly share your captures to cloud services or social media.",
-    icon: Share,
-  },
-  {
-    title: "Keyboard Shortcuts",
-    description: "Work faster with customizable keyboard shortcuts for all functions.",
-    icon: Keyboard,
   },
 ];
 
@@ -62,40 +68,53 @@ export function Features() {
     target: containerRef,
     offset: ["start end", "end start"],
   });
-  
+
   const opacity = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [0, 1, 1, 0]);
   const y = useTransform(scrollYProgress, [0, 0.2, 0.8, 1], [60, 0, 0, 60]);
 
   return (
-    <section id="features" className="py-20 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-tl from-primary/5 via-transparent to-secondary/5 -z-10" />
-      
-      <div className="container" ref={containerRef}>
-        <motion.div 
+    <section
+      id="features"
+      className="py-24 relative overflow-hidden bg-gradient-to-br from-white via-slate-50 to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
+    >
+      <div className="absolute inset-0 bg-gradient-to-tl from-blue-50/50 via-transparent to-purple-50/50 -z-10" />
+
+      <div
+        className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        ref={containerRef}
+      >
+        <motion.div
           style={{ opacity, y }}
-          className="text-center max-w-3xl mx-auto mb-16"
+          className="text-center max-w-4xl mx-auto mb-16"
         >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">Powerful Features</h2>
-          <p className="text-muted-foreground text-lg">
-            Discover the comprehensive set of tools designed to make screen capture and recording effortless and efficient.
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+            Powerful Features
+          </h2>
+          <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 leading-relaxed">
+            Discover the comprehensive set of tools designed to make screen
+            capture and recording effortless and efficient.
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {features.map((feature, index) => (
             <motion.div
               key={index}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true, margin: "-100px" }}
-              className="group bg-card hover:bg-card/80 border rounded-xl p-6 transition-all duration-300 hover:shadow-md"
+              className="group bg-white/70 backdrop-blur-sm hover:bg-white/90 border-0 rounded-2xl p-8 transition-all duration-300 hover:shadow-2xl hover:scale-105"
             >
-              <div className="mb-4 p-3 rounded-lg bg-primary/10 text-primary w-fit">
-                <feature.icon className="h-5 w-5" />
+              <div className="mb-6 p-4 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 text-white w-fit shadow-lg group-hover:scale-110 transition-transform">
+                <feature.icon className="h-6 w-6" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-              <p className="text-muted-foreground">{feature.description}</p>
+              <h3 className="text-xl font-bold mb-3 text-slate-900">
+                {feature.title}
+              </h3>
+              <p className="text-slate-600 leading-relaxed">
+                {feature.description}
+              </p>
             </motion.div>
           ))}
         </div>

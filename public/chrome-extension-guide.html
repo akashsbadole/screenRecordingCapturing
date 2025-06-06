@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chrome Extension Installation Guide - Screen Recorder & Capture</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f8fafc;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 12px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .card h2 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+        }
+        
+        .step {
+            margin-bottom: 24px;
+            padding: 20px;
+            background: #f7fafc;
+            border-radius: 8px;
+            border-left: 4px solid #3182ce;
+        }
+        
+        .step h3 {
+            color: #2d3748;
+            margin-bottom: 12px;
+        }
+        
+        .step p {
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+        
+        .code {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            margin: 8px 0;
+        }
+        
+        .download-btn {
+            display: inline-block;
+            background: #3182ce;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 600;
+            margin: 16px 8px 16px 0;
+            transition: background 0.2s;
+        }
+        
+        .download-btn:hover {
+            background: #2c5aa0;
+        }
+        
+        .feature-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .feature-list li {
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .feature-list li:before {
+            content: "✓";
+            color: #48bb78;
+            font-weight: bold;
+            margin-right: 12px;
+        }
+        
+        .warning {
+            background: #fed7d7;
+            border: 1px solid #fc8181;
+            color: #742a2a;
+            padding: 16px;
+            border-radius: 6px;
+            margin: 16px 0;
+        }
+        
+        .info {
+            background: #bee3f8;
+            border: 1px solid #63b3ed;
+            color: #2a4365;
+            padding: 16px;
+            border-radius: 6px;
+            margin: 16px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Chrome Extension Installation Guide</h1>
+            <p>Professional Screen Recording & Capture Tool</p>
+        </div>
+
+        <div class="card">
+            <h2>📥 Download Extension Files</h2>
+            <p>Since this extension is not yet published on the Chrome Web Store, you'll need to install it manually.</p>
+            
+            <div class="info">
+                <strong>Note:</strong> The extension files are located in the project's <code>chrome-extension</code> folder. 
+                You can access them directly from the project directory.
+            </div>
+
+            <a href="#" class="download-btn" onclick="downloadExtension()">📁 Access Extension Folder</a>
+            <a href="https://github.com/your-repo/screen-recorder" class="download-btn">🔗 GitHub Repository</a>
+        </div>
+
+        <div class="card">
+            <h2>🚀 Installation Steps</h2>
+            
+            <div class="step">
+                <h3>Step 1: Locate Extension Files</h3>
+                <p>Navigate to the <code>chrome-extension</code> folder in your project directory:</p>
+                <div class="code">📁 your-project/chrome-extension/</div>
+                <p>This folder contains all the necessary extension files including manifest.json, popup files, and scripts.</p>
+            </div>
+
+            <div class="step">
+                <h3>Step 2: Open Chrome Extensions</h3>
+                <p>Open Google Chrome and navigate to:</p>
+                <div class="code">chrome://extensions/</div>
+                <p>Or go to Menu → More Tools → Extensions</p>
+            </div>
+
+            <div class="step">
+                <h3>Step 3: Enable Developer Mode</h3>
+                <p>Toggle the "Developer mode" switch in the top-right corner of the extensions page.</p>
+                <div class="warning">
+                    <strong>Important:</strong> Developer mode must be enabled to install unpacked extensions.
+                </div>
+            </div>
+
+            <div class="step">
+                <h3>Step 4: Load Extension</h3>
+                <p>Click the "Load unpacked" button and select the <code>chrome-extension</code> folder.</p>
+                <p>The extension should now appear in your extensions list and toolbar.</p>
+            </div>
+
+            <div class="step">
+                <h3>Step 5: Grant Permissions</h3>
+                <p>When you first use the extension, Chrome will ask for permissions:</p>
+                <ul style="margin-left: 20px; margin-top: 8px;">
+                    <li>Screen capture access</li>
+                    <li>Microphone access (for audio recording)</li>
+                    <li>Download permissions</li>
+                </ul>
+                <p>Grant these permissions to enable full functionality.</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>✨ Features</h2>
+            <ul class="feature-list">
+                <li>High-quality screen recording (up to 1080p, 30fps)</li>
+                <li>Screenshot capture with area selection</li>
+                <li>Audio recording (microphone + system audio)</li>
+                <li>Keyboard shortcuts (Ctrl+Shift+R, Ctrl+Shift+C)</li>
+                <li>Multiple image formats (PNG, JPEG, WebP)</li>
+                <li>Recent captures history</li>
+                <li>Privacy-focused (no data collection)</li>
+                <li>Works on all websites</li>
+            </ul>
+        </div>
+
+        <div class="card">
+            <h2>⌨️ Keyboard Shortcuts</h2>
+            <div class="step">
+                <h3>Default Shortcuts</h3>
+                <p><strong>Ctrl+Shift+R</strong> - Start/Stop screen recording</p>
+                <p><strong>Ctrl+Shift+C</strong> - Take screenshot</p>
+                <p><strong>Escape</strong> - Cancel area selection</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🔧 Troubleshooting</h2>
+            
+            <div class="step">
+                <h3>Extension Not Loading</h3>
+                <p>• Make sure you selected the correct <code>chrome-extension</code> folder</p>
+                <p>• Check that all required files are present</p>
+                <p>• Try refreshing the extensions page</p>
+            </div>
+
+            <div class="step">
+                <h3>Recording/Screenshot Not Working</h3>
+                <p>• Grant all requested permissions</p>
+                <p>• Refresh the webpage and try again</p>
+                <p>• Check that no other screen recording software is running</p>
+            </div>
+
+            <div class="step">
+                <h3>Audio Not Recording</h3>
+                <p>• Grant microphone permissions when prompted</p>
+                <p>• Check system microphone settings</p>
+                <p>• Ensure microphone isn't being used by other apps</p>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>🌐 Browser Compatibility</h2>
+            <div class="info">
+                <strong>Supported Browsers:</strong><br>
+                • Google Chrome 88+<br>
+                • Microsoft Edge 88+ (Chromium-based)<br>
+                • Opera 74+<br>
+                • Brave Browser 1.20+
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>📞 Support</h2>
+            <p>Need help? Here are your options:</p>
+            <ul style="margin-left: 20px; margin-top: 8px;">
+                <li>Check the README.md file in the extension folder</li>
+                <li>Review the INSTALLATION.md guide</li>
+                <li>Create an issue on GitHub</li>
+                <li>Contact support via email</li>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function downloadExtension() {
+            alert('Please navigate to your project folder and locate the "chrome-extension" directory. This contains all the files needed for installation.');
+        }
+    </script>
+</body>
+</html>
