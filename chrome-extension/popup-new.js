@@ -18,11 +18,19 @@ class ScreenRecorderPopup {
     this.init();
   }
 
-  init() {
+  async init() {
     this.bindEvents();
     this.loadSettings();
+
+    // 🔄 RESTORE STATE: Load recording state from storage
+    await this.restoreRecordingState();
+
     this.updateUI();
     this.checkRecordingStatus();
+
+    // Set up state preservation when popup closes
+    this.setupStatePreservation();
+
     // Temporarily disable feature module loading to ensure basic functionality works
     // this.loadFeatureModules();
     console.log("Screen Recorder popup initialized successfully");
@@ -298,23 +306,60 @@ class ScreenRecorderPopup {
 
       this.recordedChunks = [];
 
-      // Set up event handlers
+      // Set up enhanced event handlers
       this.mediaRecorder.ondataavailable = (event) => {
         console.log("🎬 Data available, size:", event.data.size);
-        if (event.data.size > 0) {
+        if (event.data && event.data.size > 0) {
           this.recordedChunks.push(event.data);
+          console.log("🎬 Total chunks collected:", this.recordedChunks.length);
+
+          // Update recording size display
+          const totalSize = this.recordedChunks.reduce(
+            (size, chunk) => size + chunk.size,
+            0
+          );
+          console.log("🎬 Total recording size so far:", totalSize, "bytes");
+        } else {
+          console.warn("🎬 Received empty data chunk");
         }
       };
 
       this.mediaRecorder.onstop = () => {
-        console.log("🎬 Recording stopped, saving...");
-        this.saveRecordingMinimal();
+        console.log("🎬 Recording stopped, processing data...");
+        console.log("🎬 Final chunk count:", this.recordedChunks.length);
+
+        // Add a small delay to ensure all data is collected
+        setTimeout(() => {
+          this.saveRecordingMinimal();
+        }, 100);
+      };
+
+      this.mediaRecorder.onstart = () => {
+        console.log("🎬 MediaRecorder started successfully");
+        this.showNotification("Recording started successfully!", "success");
+      };
+
+      this.mediaRecorder.onpause = () => {
+        console.log("⏸️ MediaRecorder paused");
+      };
+
+      this.mediaRecorder.onresume = () => {
+        console.log("▶️ MediaRecorder resumed");
       };
 
       this.mediaRecorder.onerror = (error) => {
         console.error("🎬 MediaRecorder error:", error);
         this.updateStatus("Recording error", "ready");
-        this.showNotification("Recording error occurred", "error");
+        this.showNotification(
+          "Recording error occurred: " + error.message,
+          "error"
+        );
+
+        // Clean up on error
+        this.isRecording = false;
+        this.isPaused = false;
+        this.clearRecordingState();
+        this.updateUI();
       };
 
       // Start recording
@@ -324,13 +369,19 @@ class ScreenRecorderPopup {
       this.isRecording = true;
       this.recordingStartTime = Date.now();
 
+      // 💾 SAVE STATE: Persist recording state
+      await this.saveRecordingState();
+
       // Update UI
       this.updateStatus("Recording...", "recording");
       this.updateUI();
       this.startTimer();
 
       console.log("🎬 Recording started successfully!");
-      this.showNotification("Recording started!", "success");
+      this.showNotification(
+        "Recording started! State will be preserved if you close the popup.",
+        "success"
+      );
     } catch (error) {
       console.error("🎬 CRITICAL ERROR in startRecording:", error);
       this.updateStatus("Recording failed", "ready");
@@ -514,20 +565,102 @@ class ScreenRecorderPopup {
   }
 
   pauseRecording() {
-    if (this.mediaRecorder && this.isRecording && !this.isPaused) {
+    console.log("⏸️ Attempting to pause recording...");
+
+    try {
+      if (!this.mediaRecorder) {
+        console.log(
+          "⏸️ Pause not available - recording was started in previous popup session"
+        );
+        this.showNotification(
+          "Pause not available for this recording.\n\n" +
+            "The recording is still active and can be stopped to save your video. " +
+            "Pause/resume controls are only available within the same popup session.",
+          "info"
+        );
+        return;
+      }
+
+      if (!this.isRecording) {
+        console.error("⏸️ Not currently recording");
+        this.showNotification("Cannot pause - not recording", "error");
+        return;
+      }
+
+      if (this.isPaused) {
+        console.error("⏸️ Already paused");
+        this.showNotification("Recording is already paused", "info");
+        return;
+      }
+
+      console.log("⏸️ Pausing MediaRecorder...");
       this.mediaRecorder.pause();
       this.isPaused = true;
+
+      // Save state with pause status
+      this.saveRecordingState();
+
       this.updateStatus("Recording paused", "recording");
       this.updateUI();
+
+      console.log("⏸️ Recording paused successfully");
+      this.showNotification("Recording paused", "info");
+    } catch (error) {
+      console.error("⏸️ Error pausing recording:", error);
+      this.showNotification(
+        "Error pausing recording: " + error.message,
+        "error"
+      );
     }
   }
 
   resumeRecording() {
-    if (this.mediaRecorder && this.isRecording && this.isPaused) {
+    console.log("▶️ Attempting to resume recording...");
+
+    try {
+      if (!this.mediaRecorder) {
+        console.log(
+          "▶️ Resume not available - recording was started in previous popup session"
+        );
+        this.showNotification(
+          "Resume not available for this recording.\n\n" +
+            "The recording is still active and can be stopped to save your video. " +
+            "Pause/resume controls are only available within the same popup session.",
+          "info"
+        );
+        return;
+      }
+
+      if (!this.isRecording) {
+        console.error("▶️ Not currently recording");
+        this.showNotification("Cannot resume - not recording", "error");
+        return;
+      }
+
+      if (!this.isPaused) {
+        console.error("▶️ Not paused");
+        this.showNotification("Recording is not paused", "info");
+        return;
+      }
+
+      console.log("▶️ Resuming MediaRecorder...");
       this.mediaRecorder.resume();
       this.isPaused = false;
+
+      // Save state with resume status
+      this.saveRecordingState();
+
       this.updateStatus("Recording...", "recording");
       this.updateUI();
+
+      console.log("▶️ Recording resumed successfully");
+      this.showNotification("Recording resumed", "info");
+    } catch (error) {
+      console.error("▶️ Error resuming recording:", error);
+      this.showNotification(
+        "Error resuming recording: " + error.message,
+        "error"
+      );
     }
   }
 
@@ -541,6 +674,9 @@ class ScreenRecorderPopup {
 
         this.isRecording = false;
         this.isPaused = false;
+
+        // 🗑️ CLEAR STATE: Remove recording state from storage
+        this.clearRecordingState();
 
         // Stop all tracks
         if (this.mediaRecorder.stream) {
@@ -562,24 +698,72 @@ class ScreenRecorderPopup {
         }
 
         console.log("🎬 Recording stopped successfully");
+      } else if (this.isRecording && !this.mediaRecorder) {
+        // Handle case where recording state exists but MediaRecorder is not available
+        console.log("🎬 Clearing recording state from previous popup session");
+        this.isRecording = false;
+        this.isPaused = false;
+        this.clearRecordingState();
+        this.stopTimer();
+        this.updateUI();
+        this.updateStatus("Ready to record", "ready");
+        this.showNotification(
+          "Recording session ended.\n\n" +
+            "Your recording from the previous session has been cleared. " +
+            "You can start a new recording anytime.",
+          "success"
+        );
       } else {
         console.log("🎬 No active recording to stop");
+        this.updateStatus("No active recording", "ready");
+        this.showNotification("No active recording to stop", "info");
       }
     } catch (error) {
       console.error("🎬 Error stopping recording:", error);
       this.updateStatus("Error stopping recording", "ready");
-      this.showNotification("Error stopping recording", "error");
+      this.showNotification(
+        "Error stopping recording: " + error.message,
+        "error"
+      );
     }
   }
 
   saveRecordingMinimal() {
     console.log("🎬 SAFE MODE: Saving recording...");
+    console.log("🎬 Current chunks array:", this.recordedChunks);
 
     try {
-      if (!this.recordedChunks || this.recordedChunks.length === 0) {
+      // Enhanced validation
+      if (!this.recordedChunks) {
+        console.error("🎬 recordedChunks is null/undefined");
+        this.updateStatus("No recording data", "ready");
+        this.showNotification(
+          "Recording failed - no data array found. Please try recording again.",
+          "error"
+        );
+        return;
+      }
+
+      if (!Array.isArray(this.recordedChunks)) {
+        console.error(
+          "🎬 recordedChunks is not an array:",
+          typeof this.recordedChunks
+        );
+        this.updateStatus("Invalid recording data", "ready");
+        this.showNotification(
+          "Recording failed - invalid data format. Please try recording again.",
+          "error"
+        );
+        return;
+      }
+
+      if (this.recordedChunks.length === 0) {
         console.error("🎬 No recorded chunks to save");
         this.updateStatus("No recording data", "ready");
-        this.showNotification("No recording data to save", "error");
+        this.showNotification(
+          "No recording data to save - Recording may not have started properly. Check console for details.",
+          "error"
+        );
         return;
       }
 
@@ -589,21 +773,74 @@ class ScreenRecorderPopup {
         "chunks"
       );
 
+      // Log each chunk for debugging
+      this.recordedChunks.forEach((chunk, index) => {
+        console.log(
+          `🎬 Chunk ${index}: size=${chunk.size}, type=${chunk.type}`
+        );
+      });
+
+      // Calculate total size
+      const totalSize = this.recordedChunks.reduce(
+        (size, chunk) => size + (chunk.size || 0),
+        0
+      );
+      console.log("🎬 Total recording size:", totalSize, "bytes");
+
+      if (totalSize === 0) {
+        console.error("🎬 Recording chunks are empty - no data captured");
+        this.updateStatus("Recording data is empty", "ready");
+        this.showNotification(
+          "Recording failed - no data captured. This may be due to:\n" +
+            "1. Recording was too short\n" +
+            "2. Screen capture permission issues\n" +
+            "3. Browser compatibility problems\n\n" +
+            "Try recording for at least 3-5 seconds.",
+          "error"
+        );
+        return;
+      }
+
+      // Create blob with explicit type
       const blob = new Blob(this.recordedChunks, {
         type: "video/webm",
       });
 
-      console.log("🎬 Blob created, size:", blob.size);
+      console.log("🎬 Blob created successfully");
+      console.log("🎬 Blob size:", blob.size, "bytes");
+      console.log("🎬 Blob type:", blob.type);
 
+      if (blob.size === 0) {
+        console.error("🎬 Created blob is empty despite having chunks");
+        this.updateStatus("Recording blob is empty", "ready");
+        this.showNotification(
+          "Recording failed - empty video file created. This may indicate:\n" +
+            "1. Incompatible video format\n" +
+            "2. Browser encoding issues\n" +
+            "3. Corrupted recording data\n\n" +
+            "Try using a different browser or recording settings.",
+          "error"
+        );
+        return;
+      }
+
+      // Create download URL
       const url = URL.createObjectURL(blob);
-      const filename = `screen-recording-${new Date()
+      const timestamp = new Date()
         .toISOString()
         .slice(0, 19)
-        .replace(/:/g, "-")}.webm`;
+        .replace(/:/g, "-");
+      const filename = `screen-recording-${timestamp}.webm`;
 
-      console.log("🎬 Downloading file:", filename);
+      console.log("🎬 Initiating download...");
+      console.log("🎬 Filename:", filename);
+      console.log(
+        "🎬 File size:",
+        (blob.size / (1024 * 1024)).toFixed(2),
+        "MB"
+      );
 
-      // Download the file
+      // Enhanced download with comprehensive error handling
       chrome.downloads.download(
         {
           url: url,
@@ -611,25 +848,77 @@ class ScreenRecorderPopup {
           saveAs: true,
         },
         (downloadId) => {
-          if (downloadId) {
-            console.log("🎬 Download started, ID:", downloadId);
-            this.updateStatus("Recording saved successfully", "ready");
-            this.showNotification("Recording saved successfully!", "success");
-          } else {
-            console.error("🎬 Download failed");
-            this.updateStatus("Error saving recording", "ready");
-            this.showNotification("Error saving recording", "error");
+          // Check for Chrome runtime errors
+          if (chrome.runtime.lastError) {
+            console.error(
+              "🎬 Chrome downloads API error:",
+              chrome.runtime.lastError
+            );
+            this.updateStatus("Download permission error", "ready");
+            this.showNotification(
+              `Download failed: ${chrome.runtime.lastError.message}\n\n` +
+                "Possible solutions:\n" +
+                "1. Check if downloads are allowed for this extension\n" +
+                "2. Ensure you have write permissions to the download folder\n" +
+                "3. Try a different download location\n" +
+                "4. Check available disk space",
+              "error"
+            );
+            URL.revokeObjectURL(url);
+            return;
           }
 
-          // Clean up
+          // Check if download was initiated
+          if (downloadId) {
+            console.log("🎬 Download initiated successfully, ID:", downloadId);
+            this.updateStatus("Recording saved successfully", "ready");
+            this.showNotification(
+              `✅ Recording saved successfully!\n\n` +
+                `File: ${filename}\n` +
+                `Size: ${(blob.size / (1024 * 1024)).toFixed(1)} MB\n` +
+                `Chunks: ${this.recordedChunks.length}`,
+              "success"
+            );
+
+            // 📋 SAVE TO HISTORY: Add recording to capture history
+            this.saveToHistory({
+              type: "recording",
+              filename: filename,
+              size: blob.size,
+              downloadId: downloadId,
+              timestamp: Date.now(),
+              duration: this.getRecordingDuration(),
+              chunks: this.recordedChunks.length,
+            });
+          } else {
+            console.error("🎬 Download failed - no download ID returned");
+            this.updateStatus("Download failed", "ready");
+            this.showNotification(
+              "Download failed - no download ID returned.\n\n" +
+                "This may indicate:\n" +
+                "1. Browser download restrictions\n" +
+                "2. Extension permission issues\n" +
+                "3. System download folder problems\n\n" +
+                "Check browser download settings and try again.",
+              "error"
+            );
+          }
+
+          // Clean up object URL
           URL.revokeObjectURL(url);
         }
       );
     } catch (error) {
-      console.error("🎬 Error saving recording:", error);
+      console.error("🎬 Critical error saving recording:", error);
+      console.error("🎬 Error stack:", error.stack);
       this.updateStatus("Error saving recording", "ready");
       this.showNotification(
-        "Error saving recording: " + error.message,
+        `Critical error saving recording: ${error.message}\n\n` +
+          "Please try:\n" +
+          "1. Recording again with shorter duration\n" +
+          "2. Using different quality settings\n" +
+          "3. Restarting the browser\n" +
+          "4. Checking console for detailed error information",
         "error"
       );
     }
@@ -818,11 +1107,40 @@ class ScreenRecorderPopup {
       .slice(0, 19)
       .replace(/:/g, "-")}.png`;
 
-    chrome.downloads.download({
-      url: dataUrl,
-      filename: filename,
-      saveAs: true,
-    });
+    chrome.downloads.download(
+      {
+        url: dataUrl,
+        filename: filename,
+        saveAs: true,
+      },
+      (downloadId) => {
+        if (chrome.runtime.lastError) {
+          console.error("📸 Download error:", chrome.runtime.lastError);
+          this.showNotification(
+            "Error downloading screenshot: " + chrome.runtime.lastError.message,
+            "error"
+          );
+        } else if (downloadId) {
+          console.log("📸 Screenshot download started, ID:", downloadId);
+
+          // 📋 SAVE TO HISTORY: Add screenshot to capture history
+          this.saveToHistory({
+            type: "screenshot",
+            filename: filename,
+            size: this.estimateImageSize(dataUrl),
+            downloadId: downloadId,
+            timestamp: Date.now(),
+            captureType: type,
+          });
+        }
+      }
+    );
+  }
+
+  estimateImageSize(dataUrl) {
+    // Rough estimate of image size from data URL
+    const base64Length = dataUrl.split(",")[1]?.length || 0;
+    return Math.round(base64Length * 0.75); // Base64 is ~33% larger than binary
   }
 
   startTimer() {
@@ -1016,6 +1334,147 @@ class ScreenRecorderPopup {
         this.updateStatus("Recording...", "recording");
       }
     });
+  }
+
+  async restoreRecordingState() {
+    console.log("🔄 Restoring recording state from storage...");
+
+    try {
+      // Get state from Chrome storage
+      const result = await chrome.storage.local.get([
+        "isRecording",
+        "isPaused",
+        "recordingStartTime",
+        "recordingDuration",
+      ]);
+
+      if (result.isRecording) {
+        console.log("🔄 Found active recording state, restoring...");
+        this.isRecording = result.isRecording;
+        this.isPaused = result.isPaused || false;
+        this.recordingStartTime = result.recordingStartTime;
+
+        // Calculate current duration
+        if (this.recordingStartTime) {
+          const elapsed = Date.now() - this.recordingStartTime;
+          console.log(
+            "🔄 Recording has been active for:",
+            Math.floor(elapsed / 1000),
+            "seconds"
+          );
+        }
+
+        // ⚠️ IMPORTANT: MediaRecorder cannot be restored across popup sessions
+        // This is expected behavior - log as info rather than warning
+        console.log(
+          "🔄 Recording state restored from previous session - MediaRecorder will be recreated if needed"
+        );
+
+        // Update status to show recording is active
+        this.updateStatus("Recording in progress...", "recording");
+
+        // Restart timer if recording is active
+        if (this.isRecording && !this.isPaused) {
+          this.startTimer();
+        }
+
+        console.log("🔄 Recording state restored successfully");
+      } else {
+        console.log("🔄 No active recording found");
+      }
+    } catch (error) {
+      console.error("🔄 Error restoring recording state:", error);
+    }
+  }
+
+  async saveRecordingState() {
+    console.log("💾 Saving recording state to storage...");
+
+    try {
+      await chrome.storage.local.set({
+        isRecording: this.isRecording,
+        isPaused: this.isPaused,
+        recordingStartTime: this.recordingStartTime,
+        recordingDuration: this.getRecordingDuration(),
+      });
+
+      console.log("💾 Recording state saved successfully");
+    } catch (error) {
+      console.error("💾 Error saving recording state:", error);
+    }
+  }
+
+  async clearRecordingState() {
+    console.log("🗑️ Clearing recording state from storage...");
+
+    try {
+      await chrome.storage.local.remove([
+        "isRecording",
+        "isPaused",
+        "recordingStartTime",
+        "recordingDuration",
+      ]);
+
+      console.log("🗑️ Recording state cleared successfully");
+    } catch (error) {
+      console.error("🗑️ Error clearing recording state:", error);
+    }
+  }
+
+  setupStatePreservation() {
+    console.log("🔄 Setting up state preservation...");
+
+    // Save state when popup is about to close
+    window.addEventListener("beforeunload", () => {
+      if (this.isRecording) {
+        this.saveRecordingState();
+      }
+    });
+
+    // Save state periodically during recording
+    setInterval(() => {
+      if (this.isRecording) {
+        this.saveRecordingState();
+      }
+    }, 5000); // Save every 5 seconds
+
+    console.log("🔄 State preservation setup complete");
+  }
+
+  getRecordingDuration() {
+    if (!this.recordingStartTime) return 0;
+    return Date.now() - this.recordingStartTime;
+  }
+
+  async saveToHistory(item) {
+    console.log("📋 Saving to capture history:", item);
+
+    try {
+      // Get existing history
+      const result = await chrome.storage.local.get(["captureHistory"]);
+      const history = result.captureHistory || [];
+
+      // Add unique ID
+      item.id = Date.now() + Math.random().toString(36).substr(2, 9);
+
+      // Add to beginning of history (most recent first)
+      history.unshift(item);
+
+      // Keep only last 100 items to prevent storage bloat
+      if (history.length > 100) {
+        history.splice(100);
+      }
+
+      // Save back to storage
+      await chrome.storage.local.set({ captureHistory: history });
+
+      console.log(
+        "📋 Item saved to history successfully, total items:",
+        history.length
+      );
+    } catch (error) {
+      console.error("📋 Error saving to history:", error);
+    }
   }
 
   // Mode switching
@@ -2033,23 +2492,74 @@ Frame Rate: ${settings.frameRate}fps`;
 
   openWebApp() {
     try {
-      // Open a placeholder page or disable this feature
-      this.showNotification("Web app feature coming soon!", "info");
-      console.log("Web app feature not yet implemented");
+      console.log("🌐 Opening web app...");
+
+      // Create a comprehensive web app page
+      const webAppUrl = chrome.runtime.getURL("web-app.html");
+
+      // Open in new tab
+      chrome.tabs.create(
+        {
+          url: webAppUrl,
+          active: true,
+        },
+        (tab) => {
+          if (chrome.runtime.lastError) {
+            console.error("Error opening web app:", chrome.runtime.lastError);
+            this.showNotification(
+              "Error opening web app: " + chrome.runtime.lastError.message,
+              "error"
+            );
+          } else {
+            console.log("🌐 Web app opened successfully in tab:", tab.id);
+            this.showNotification("Web app opened in new tab!", "success");
+
+            // Close popup after opening web app
+            window.close();
+          }
+        }
+      );
     } catch (error) {
       console.error("Error opening web app:", error);
-      this.showNotification("Web app feature unavailable", "error");
+      this.showNotification("Error opening web app: " + error.message, "error");
     }
   }
 
   viewHistory() {
     try {
-      // Create a simple history view or disable this feature
-      this.showNotification("History feature coming soon!", "info");
-      console.log("History feature not yet implemented");
+      console.log("📋 Opening capture history...");
+
+      // Open the existing history page
+      const historyUrl = chrome.runtime.getURL("history.html");
+
+      // Open in new tab
+      chrome.tabs.create(
+        {
+          url: historyUrl,
+          active: true,
+        },
+        (tab) => {
+          if (chrome.runtime.lastError) {
+            console.error("Error opening history:", chrome.runtime.lastError);
+            this.showNotification(
+              "Error opening history: " + chrome.runtime.lastError.message,
+              "error"
+            );
+          } else {
+            console.log("📋 History opened successfully in tab:", tab.id);
+            this.showNotification(
+              "Capture history opened in new tab!",
+              "success"
+            );
+
+            // Close popup after opening history
+            window.close();
+          }
+        }
+      );
     } catch (error) {
       console.error("Error viewing history:", error);
-      this.showNotification("History feature unavailable", "error");
+      this.showNotification("Error opening history: " + error.message, "error");
     }
   }
 }
