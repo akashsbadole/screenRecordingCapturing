@@ -1,34 +1,52 @@
 class AnnotationOverlay {
-    constructor() {
-        this.isActive = false;
-        this.currentTool = 'pen';
-        this.currentColor = '#ff0000';
-        this.currentSize = 3;
-        this.currentOpacity = 1;
-        this.isDrawing = false;
-        this.annotations = [];
-        this.undoStack = [];
-        this.redoStack = [];
-        
-        this.overlay = null;
-        this.canvas = null;
-        this.ctx = null;
-        this.toolbar = null;
-        
-        this.init();
-    }
+  constructor() {
+    this.isActive = false;
+    this.currentTool = "pen";
+    this.currentColor = "#ff0000";
+    this.currentSize = 3;
+    this.currentOpacity = 1;
+    this.isDrawing = false;
+    this.annotations = [];
+    this.undoStack = [];
+    this.redoStack = [];
+    this.stamps = [];
+    this.shapes = [];
 
-    init() {
-        this.createOverlay();
-        this.createToolbar();
-        this.bindEvents();
-    }
+    this.overlay = null;
+    this.canvas = null;
+    this.ctx = null;
+    this.toolbar = null;
+    this.stampLibrary = null;
 
-    createOverlay() {
-        // Create main overlay
-        this.overlay = document.createElement('div');
-        this.overlay.id = 'annotation-overlay';
-        this.overlay.style.cssText = `
+    // Advanced tools
+    this.tools = {
+      pen: { cursor: "crosshair", icon: "✏️" },
+      highlighter: { cursor: "crosshair", icon: "🖍️" },
+      text: { cursor: "text", icon: "📝" },
+      rectangle: { cursor: "crosshair", icon: "⬜" },
+      circle: { cursor: "crosshair", icon: "⭕" },
+      arrow: { cursor: "crosshair", icon: "➡️" },
+      line: { cursor: "crosshair", icon: "📏" },
+      blur: { cursor: "crosshair", icon: "🌫️" },
+      pixelate: { cursor: "crosshair", icon: "🔲" },
+      stamp: { cursor: "pointer", icon: "🏷️" },
+      eraser: { cursor: "grab", icon: "🧽" },
+    };
+
+    this.init();
+  }
+
+  init() {
+    this.createOverlay();
+    this.createToolbar();
+    this.bindEvents();
+  }
+
+  createOverlay() {
+    // Create main overlay
+    this.overlay = document.createElement("div");
+    this.overlay.id = "annotation-overlay";
+    this.overlay.style.cssText = `
             position: fixed;
             top: 0;
             left: 0;
@@ -39,9 +57,9 @@ class AnnotationOverlay {
             display: none;
         `;
 
-        // Create canvas for annotations
-        this.canvas = document.createElement('canvas');
-        this.canvas.style.cssText = `
+    // Create canvas for annotations
+    this.canvas = document.createElement("canvas");
+    this.canvas.style.cssText = `
             position: absolute;
             top: 0;
             left: 0;
@@ -50,19 +68,19 @@ class AnnotationOverlay {
             pointer-events: auto;
             cursor: crosshair;
         `;
-        
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-        this.ctx = this.canvas.getContext('2d');
-        
-        this.overlay.appendChild(this.canvas);
-        document.body.appendChild(this.overlay);
-    }
 
-    createToolbar() {
-        this.toolbar = document.createElement('div');
-        this.toolbar.id = 'annotation-toolbar';
-        this.toolbar.style.cssText = `
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+    this.ctx = this.canvas.getContext("2d");
+
+    this.overlay.appendChild(this.canvas);
+    document.body.appendChild(this.overlay);
+  }
+
+  createToolbar() {
+    this.toolbar = document.createElement("div");
+    this.toolbar.id = "annotation-toolbar";
+    this.toolbar.style.cssText = `
             position: fixed;
             top: 20px;
             left: 50%;
@@ -77,7 +95,7 @@ class AnnotationOverlay {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
         `;
 
-        this.toolbar.innerHTML = `
+    this.toolbar.innerHTML = `
             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
                 <!-- Drawing Tools -->
                 <div style="display: flex; gap: 4px; background: #f1f5f9; border-radius: 8px; padding: 4px;">
@@ -129,9 +147,25 @@ class AnnotationOverlay {
                     <button id="color-picker" style="width: 32px; height: 24px; border-radius: 4px; border: 2px solid #e2e8f0; background: #ff0000; cursor: pointer;"></button>
                     <div id="color-palette" style="display: none; position: absolute; top: 30px; left: 0; background: white; border-radius: 8px; padding: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 1000000;">
                         <div style="display: grid; grid-template-columns: repeat(6, 1fr); gap: 4px; margin-bottom: 8px;">
-                            ${['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#000000', '#ffffff', '#808080', '#800000', '#008000', '#000080'].map(color => 
-                                `<button style="width: 20px; height: 20px; background: ${color}; border: 1px solid #ccc; border-radius: 2px; cursor: pointer;" data-color="${color}"></button>`
-                            ).join('')}
+                            ${[
+                              "#ff0000",
+                              "#00ff00",
+                              "#0000ff",
+                              "#ffff00",
+                              "#ff00ff",
+                              "#00ffff",
+                              "#000000",
+                              "#ffffff",
+                              "#808080",
+                              "#800000",
+                              "#008000",
+                              "#000080",
+                            ]
+                              .map(
+                                (color) =>
+                                  `<button style="width: 20px; height: 20px; background: ${color}; border: 1px solid #ccc; border-radius: 2px; cursor: pointer;" data-color="${color}"></button>`
+                              )
+                              .join("")}
                         </div>
                         <input type="color" id="custom-color" value="#ff0000" style="width: 100%; height: 24px; border: none; border-radius: 4px; cursor: pointer;">
                     </div>
@@ -181,9 +215,9 @@ class AnnotationOverlay {
             </div>
         `;
 
-        // Add styles
-        const style = document.createElement('style');
-        style.textContent = `
+    // Add styles
+    const style = document.createElement("style");
+    style.textContent = `
             .tool-btn, .action-btn {
                 width: 32px;
                 height: 24px;
@@ -208,322 +242,334 @@ class AnnotationOverlay {
                 cursor: not-allowed;
             }
         `;
-        document.head.appendChild(style);
-        document.body.appendChild(this.toolbar);
-    }
+    document.head.appendChild(style);
+    document.body.appendChild(this.toolbar);
+  }
 
-    bindEvents() {
-        // Tool selection
-        this.toolbar.addEventListener('click', (e) => {
-            const toolBtn = e.target.closest('[data-tool]');
-            if (toolBtn) {
-                this.setTool(toolBtn.dataset.tool);
-                this.updateToolButtons();
-            }
-        });
+  bindEvents() {
+    // Tool selection
+    this.toolbar.addEventListener("click", (e) => {
+      const toolBtn = e.target.closest("[data-tool]");
+      if (toolBtn) {
+        this.setTool(toolBtn.dataset.tool);
+        this.updateToolButtons();
+      }
+    });
 
-        // Color picker
-        const colorPicker = this.toolbar.querySelector('#color-picker');
-        const colorPalette = this.toolbar.querySelector('#color-palette');
-        
-        colorPicker.addEventListener('click', () => {
-            colorPalette.style.display = colorPalette.style.display === 'none' ? 'block' : 'none';
-        });
+    // Color picker
+    const colorPicker = this.toolbar.querySelector("#color-picker");
+    const colorPalette = this.toolbar.querySelector("#color-palette");
 
-        colorPalette.addEventListener('click', (e) => {
-            const colorBtn = e.target.closest('[data-color]');
-            if (colorBtn) {
-                this.setColor(colorBtn.dataset.color);
-                colorPalette.style.display = 'none';
-            }
-        });
+    colorPicker.addEventListener("click", () => {
+      colorPalette.style.display =
+        colorPalette.style.display === "none" ? "block" : "none";
+    });
 
-        const customColor = this.toolbar.querySelector('#custom-color');
-        customColor.addEventListener('change', (e) => {
-            this.setColor(e.target.value);
-            colorPalette.style.display = 'none';
-        });
+    colorPalette.addEventListener("click", (e) => {
+      const colorBtn = e.target.closest("[data-color]");
+      if (colorBtn) {
+        this.setColor(colorBtn.dataset.color);
+        colorPalette.style.display = "none";
+      }
+    });
 
-        // Size control
-        const sizeSlider = this.toolbar.querySelector('#size-slider');
-        const sizeValue = this.toolbar.querySelector('#size-value');
-        
-        sizeSlider.addEventListener('input', (e) => {
-            this.currentSize = parseInt(e.target.value);
-            sizeValue.textContent = this.currentSize;
-        });
+    const customColor = this.toolbar.querySelector("#custom-color");
+    customColor.addEventListener("change", (e) => {
+      this.setColor(e.target.value);
+      colorPalette.style.display = "none";
+    });
 
-        // Action buttons
-        this.toolbar.querySelector('#undo-btn').addEventListener('click', () => this.undo());
-        this.toolbar.querySelector('#redo-btn').addEventListener('click', () => this.redo());
-        this.toolbar.querySelector('#clear-btn').addEventListener('click', () => this.clear());
-        this.toolbar.querySelector('#close-annotations').addEventListener('click', () => this.hide());
+    // Size control
+    const sizeSlider = this.toolbar.querySelector("#size-slider");
+    const sizeValue = this.toolbar.querySelector("#size-value");
 
-        // Canvas drawing events
-        this.canvas.addEventListener('mousedown', (e) => this.startDrawing(e));
-        this.canvas.addEventListener('mousemove', (e) => this.draw(e));
-        this.canvas.addEventListener('mouseup', () => this.stopDrawing());
-        this.canvas.addEventListener('mouseout', () => this.stopDrawing());
+    sizeSlider.addEventListener("input", (e) => {
+      this.currentSize = parseInt(e.target.value);
+      sizeValue.textContent = this.currentSize;
+    });
 
-        // Keyboard shortcuts
-        document.addEventListener('keydown', (e) => {
-            if (!this.isActive) return;
-            
-            if (e.ctrlKey || e.metaKey) {
-                switch (e.key) {
-                    case 'z':
-                        e.preventDefault();
-                        if (e.shiftKey) {
-                            this.redo();
-                        } else {
-                            this.undo();
-                        }
-                        break;
-                    case 'y':
-                        e.preventDefault();
-                        this.redo();
-                        break;
-                }
-            }
-            
-            if (e.key === 'Escape') {
-                this.hide();
-            }
-        });
+    // Action buttons
+    this.toolbar
+      .querySelector("#undo-btn")
+      .addEventListener("click", () => this.undo());
+    this.toolbar
+      .querySelector("#redo-btn")
+      .addEventListener("click", () => this.redo());
+    this.toolbar
+      .querySelector("#clear-btn")
+      .addEventListener("click", () => this.clear());
+    this.toolbar
+      .querySelector("#close-annotations")
+      .addEventListener("click", () => this.hide());
 
-        // Close color palette when clicking outside
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('#color-picker') && !e.target.closest('#color-palette')) {
-                const colorPalette = this.toolbar.querySelector('#color-palette');
-                if (colorPalette) {
-                    colorPalette.style.display = 'none';
-                }
-            }
-        });
-    }
+    // Canvas drawing events
+    this.canvas.addEventListener("mousedown", (e) => this.startDrawing(e));
+    this.canvas.addEventListener("mousemove", (e) => this.draw(e));
+    this.canvas.addEventListener("mouseup", () => this.stopDrawing());
+    this.canvas.addEventListener("mouseout", () => this.stopDrawing());
 
-    show() {
-        this.isActive = true;
-        this.overlay.style.display = 'block';
-        this.toolbar.style.display = 'block';
-        
-        // Resize canvas to current window size
-        this.canvas.width = window.innerWidth;
-        this.canvas.height = window.innerHeight;
-        
-        // Redraw existing annotations
-        this.redrawAnnotations();
-    }
+    // Keyboard shortcuts
+    document.addEventListener("keydown", (e) => {
+      if (!this.isActive) return;
 
-    hide() {
-        this.isActive = false;
-        this.overlay.style.display = 'none';
-        this.toolbar.style.display = 'none';
-        
-        // Notify that annotations are closed
-        window.postMessage({ type: 'ANNOTATIONS_CLOSED' }, '*');
-    }
-
-    setTool(tool) {
-        this.currentTool = tool;
-        this.canvas.style.cursor = tool === 'eraser' ? 'grab' : 'crosshair';
-    }
-
-    setColor(color) {
-        this.currentColor = color;
-        const colorPicker = this.toolbar.querySelector('#color-picker');
-        colorPicker.style.background = color;
-    }
-
-    updateToolButtons() {
-        const toolBtns = this.toolbar.querySelectorAll('[data-tool]');
-        toolBtns.forEach(btn => {
-            btn.classList.toggle('active', btn.dataset.tool === this.currentTool);
-        });
-    }
-
-    startDrawing(e) {
-        this.isDrawing = true;
-        const rect = this.canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        this.currentPath = {
-            tool: this.currentTool,
-            color: this.currentColor,
-            size: this.currentSize,
-            opacity: this.currentOpacity,
-            points: [{ x, y }]
-        };
-        
-        if (this.currentTool === 'text') {
-            this.addText(x, y);
-        }
-    }
-
-    draw(e) {
-        if (!this.isDrawing || this.currentTool === 'text') return;
-        
-        const rect = this.canvas.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const y = e.clientY - rect.top;
-        
-        this.currentPath.points.push({ x, y });
-        this.drawPath(this.currentPath);
-    }
-
-    stopDrawing() {
-        if (!this.isDrawing) return;
-        
-        this.isDrawing = false;
-        if (this.currentPath && this.currentPath.points.length > 0) {
-            this.annotations.push(this.currentPath);
-            this.undoStack.push([...this.annotations]);
-            this.redoStack = [];
-            this.updateActionButtons();
-        }
-    }
-
-    drawPath(path) {
-        this.ctx.save();
-        this.ctx.globalAlpha = path.opacity;
-        this.ctx.strokeStyle = path.color;
-        this.ctx.lineWidth = path.size;
-        this.ctx.lineCap = 'round';
-        this.ctx.lineJoin = 'round';
-        
-        if (path.tool === 'highlighter') {
-            this.ctx.globalCompositeOperation = 'multiply';
-            this.ctx.globalAlpha = 0.3;
-        } else if (path.tool === 'eraser') {
-            this.ctx.globalCompositeOperation = 'destination-out';
-        }
-        
-        this.ctx.beginPath();
-        if (path.points.length > 1) {
-            this.ctx.moveTo(path.points[0].x, path.points[0].y);
-            for (let i = 1; i < path.points.length; i++) {
-                this.ctx.lineTo(path.points[i].x, path.points[i].y);
-            }
-            this.ctx.stroke();
-        }
-        
-        this.ctx.restore();
-    }
-
-    addText(x, y) {
-        const text = prompt('Enter text:');
-        if (text) {
-            this.ctx.save();
-            this.ctx.font = `${this.currentSize * 4}px Arial`;
-            this.ctx.fillStyle = this.currentColor;
-            this.ctx.fillText(text, x, y);
-            this.ctx.restore();
-            
-            this.annotations.push({
-                tool: 'text',
-                color: this.currentColor,
-                size: this.currentSize,
-                text: text,
-                x: x,
-                y: y
-            });
-            
-            this.undoStack.push([...this.annotations]);
-            this.redoStack = [];
-            this.updateActionButtons();
-        }
-        this.isDrawing = false;
-    }
-
-    redrawAnnotations() {
-        this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-        
-        this.annotations.forEach(annotation => {
-            if (annotation.tool === 'text') {
-                this.ctx.save();
-                this.ctx.font = `${annotation.size * 4}px Arial`;
-                this.ctx.fillStyle = annotation.color;
-                this.ctx.fillText(annotation.text, annotation.x, annotation.y);
-                this.ctx.restore();
+      if (e.ctrlKey || e.metaKey) {
+        switch (e.key) {
+          case "z":
+            e.preventDefault();
+            if (e.shiftKey) {
+              this.redo();
             } else {
-                this.drawPath(annotation);
+              this.undo();
             }
-        });
-    }
-
-    undo() {
-        if (this.undoStack.length > 1) {
-            this.redoStack.push(this.undoStack.pop());
-            this.annotations = [...this.undoStack[this.undoStack.length - 1]];
-            this.redrawAnnotations();
-            this.updateActionButtons();
+            break;
+          case "y":
+            e.preventDefault();
+            this.redo();
+            break;
         }
-    }
+      }
 
-    redo() {
-        if (this.redoStack.length > 0) {
-            const state = this.redoStack.pop();
-            this.undoStack.push(state);
-            this.annotations = [...state];
-            this.redrawAnnotations();
-            this.updateActionButtons();
+      if (e.key === "Escape") {
+        this.hide();
+      }
+    });
+
+    // Close color palette when clicking outside
+    document.addEventListener("click", (e) => {
+      if (
+        !e.target.closest("#color-picker") &&
+        !e.target.closest("#color-palette")
+      ) {
+        const colorPalette = this.toolbar.querySelector("#color-palette");
+        if (colorPalette) {
+          colorPalette.style.display = "none";
         }
+      }
+    });
+  }
+
+  show() {
+    this.isActive = true;
+    this.overlay.style.display = "block";
+    this.toolbar.style.display = "block";
+
+    // Resize canvas to current window size
+    this.canvas.width = window.innerWidth;
+    this.canvas.height = window.innerHeight;
+
+    // Redraw existing annotations
+    this.redrawAnnotations();
+  }
+
+  hide() {
+    this.isActive = false;
+    this.overlay.style.display = "none";
+    this.toolbar.style.display = "none";
+
+    // Notify that annotations are closed
+    window.postMessage({ type: "ANNOTATIONS_CLOSED" }, "*");
+  }
+
+  setTool(tool) {
+    this.currentTool = tool;
+    this.canvas.style.cursor = tool === "eraser" ? "grab" : "crosshair";
+  }
+
+  setColor(color) {
+    this.currentColor = color;
+    const colorPicker = this.toolbar.querySelector("#color-picker");
+    colorPicker.style.background = color;
+  }
+
+  updateToolButtons() {
+    const toolBtns = this.toolbar.querySelectorAll("[data-tool]");
+    toolBtns.forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.tool === this.currentTool);
+    });
+  }
+
+  startDrawing(e) {
+    this.isDrawing = true;
+    const rect = this.canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    this.currentPath = {
+      tool: this.currentTool,
+      color: this.currentColor,
+      size: this.currentSize,
+      opacity: this.currentOpacity,
+      points: [{ x, y }],
+    };
+
+    if (this.currentTool === "text") {
+      this.addText(x, y);
+    }
+  }
+
+  draw(e) {
+    if (!this.isDrawing || this.currentTool === "text") return;
+
+    const rect = this.canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+
+    this.currentPath.points.push({ x, y });
+    this.drawPath(this.currentPath);
+  }
+
+  stopDrawing() {
+    if (!this.isDrawing) return;
+
+    this.isDrawing = false;
+    if (this.currentPath && this.currentPath.points.length > 0) {
+      this.annotations.push(this.currentPath);
+      this.undoStack.push([...this.annotations]);
+      this.redoStack = [];
+      this.updateActionButtons();
+    }
+  }
+
+  drawPath(path) {
+    this.ctx.save();
+    this.ctx.globalAlpha = path.opacity;
+    this.ctx.strokeStyle = path.color;
+    this.ctx.lineWidth = path.size;
+    this.ctx.lineCap = "round";
+    this.ctx.lineJoin = "round";
+
+    if (path.tool === "highlighter") {
+      this.ctx.globalCompositeOperation = "multiply";
+      this.ctx.globalAlpha = 0.3;
+    } else if (path.tool === "eraser") {
+      this.ctx.globalCompositeOperation = "destination-out";
     }
 
-    clear() {
-        if (confirm('Clear all annotations?')) {
-            this.annotations = [];
-            this.undoStack = [[]];
-            this.redoStack = [];
-            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            this.updateActionButtons();
-        }
+    this.ctx.beginPath();
+    if (path.points.length > 1) {
+      this.ctx.moveTo(path.points[0].x, path.points[0].y);
+      for (let i = 1; i < path.points.length; i++) {
+        this.ctx.lineTo(path.points[i].x, path.points[i].y);
+      }
+      this.ctx.stroke();
     }
 
-    updateActionButtons() {
-        const undoBtn = this.toolbar.querySelector('#undo-btn');
-        const redoBtn = this.toolbar.querySelector('#redo-btn');
-        
-        undoBtn.disabled = this.undoStack.length <= 1;
-        redoBtn.disabled = this.redoStack.length === 0;
-    }
+    this.ctx.restore();
+  }
 
-    // Export annotations as image data
-    exportAnnotations() {
-        return this.canvas.toDataURL('image/png');
-    }
+  addText(x, y) {
+    const text = prompt("Enter text:");
+    if (text) {
+      this.ctx.save();
+      this.ctx.font = `${this.currentSize * 4}px Arial`;
+      this.ctx.fillStyle = this.currentColor;
+      this.ctx.fillText(text, x, y);
+      this.ctx.restore();
 
-    // Import annotations from image data
-    importAnnotations(imageData) {
-        const img = new Image();
-        img.onload = () => {
-            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-            this.ctx.drawImage(img, 0, 0);
-        };
-        img.src = imageData;
+      this.annotations.push({
+        tool: "text",
+        color: this.currentColor,
+        size: this.currentSize,
+        text: text,
+        x: x,
+        y: y,
+      });
+
+      this.undoStack.push([...this.annotations]);
+      this.redoStack = [];
+      this.updateActionButtons();
     }
+    this.isDrawing = false;
+  }
+
+  redrawAnnotations() {
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+    this.annotations.forEach((annotation) => {
+      if (annotation.tool === "text") {
+        this.ctx.save();
+        this.ctx.font = `${annotation.size * 4}px Arial`;
+        this.ctx.fillStyle = annotation.color;
+        this.ctx.fillText(annotation.text, annotation.x, annotation.y);
+        this.ctx.restore();
+      } else {
+        this.drawPath(annotation);
+      }
+    });
+  }
+
+  undo() {
+    if (this.undoStack.length > 1) {
+      this.redoStack.push(this.undoStack.pop());
+      this.annotations = [...this.undoStack[this.undoStack.length - 1]];
+      this.redrawAnnotations();
+      this.updateActionButtons();
+    }
+  }
+
+  redo() {
+    if (this.redoStack.length > 0) {
+      const state = this.redoStack.pop();
+      this.undoStack.push(state);
+      this.annotations = [...state];
+      this.redrawAnnotations();
+      this.updateActionButtons();
+    }
+  }
+
+  clear() {
+    if (confirm("Clear all annotations?")) {
+      this.annotations = [];
+      this.undoStack = [[]];
+      this.redoStack = [];
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.updateActionButtons();
+    }
+  }
+
+  updateActionButtons() {
+    const undoBtn = this.toolbar.querySelector("#undo-btn");
+    const redoBtn = this.toolbar.querySelector("#redo-btn");
+
+    undoBtn.disabled = this.undoStack.length <= 1;
+    redoBtn.disabled = this.redoStack.length === 0;
+  }
+
+  // Export annotations as image data
+  exportAnnotations() {
+    return this.canvas.toDataURL("image/png");
+  }
+
+  // Import annotations from image data
+  importAnnotations(imageData) {
+    const img = new Image();
+    img.onload = () => {
+      this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      this.ctx.drawImage(img, 0, 0);
+    };
+    img.src = imageData;
+  }
 }
 
 // Initialize annotation overlay
 let annotationOverlay = null;
 
 // Listen for messages from popup
-window.addEventListener('message', (event) => {
-    if (event.data.type === 'TOGGLE_ANNOTATIONS') {
-        if (!annotationOverlay) {
-            annotationOverlay = new AnnotationOverlay();
-        }
-        
-        if (annotationOverlay.isActive) {
-            annotationOverlay.hide();
-        } else {
-            annotationOverlay.show();
-        }
+window.addEventListener("message", (event) => {
+  if (event.data.type === "TOGGLE_ANNOTATIONS") {
+    if (!annotationOverlay) {
+      annotationOverlay = new AnnotationOverlay();
     }
+
+    if (annotationOverlay.isActive) {
+      annotationOverlay.hide();
+    } else {
+      annotationOverlay.show();
+    }
+  }
 });
 
 // Export for use in other scripts
-if (typeof module !== 'undefined' && module.exports) {
-    module.exports = AnnotationOverlay;
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = AnnotationOverlay;
 }

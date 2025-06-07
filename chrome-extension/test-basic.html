@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Extension Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f0f0f0;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background: #f9f9f9;
+        }
+        
+        .test-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        
+        .test-button:hover {
+            background: #45a049;
+        }
+        
+        .test-button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .status {
+            text-align: center;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 10px;
+            border-radius: 5px;
+            background: #e9ecef;
+        }
+        
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Screen Recorder Extension - Basic Test</h1>
+        
+        <div class="instructions">
+            <strong>📋 Instructions:</strong>
+            <ol>
+                <li>Make sure the extension is loaded in Chrome</li>
+                <li>Click the tests below to verify functionality</li>
+                <li>Check the browser console for detailed logs</li>
+                <li>If tests pass, the extension is working correctly!</li>
+            </ol>
+        </div>
+        
+        <div class="status" id="status">Ready to test...</div>
+        
+        <div class="test-section">
+            <h3>🔧 Basic Extension Tests</h3>
+            <button class="test-button" onclick="testExtensionLoaded()">Test Extension Loaded</button>
+            <button class="test-button" onclick="testChromeAPIs()">Test Chrome APIs</button>
+            <button class="test-button" onclick="testStorage()">Test Storage</button>
+            <div id="basic-results"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📹 Media Access Tests</h3>
+            <button class="test-button" onclick="testCamera()">Test Camera</button>
+            <button class="test-button" onclick="testMicrophone()">Test Microphone</button>
+            <button class="test-button" onclick="testScreenShare()">Test Screen Share</button>
+            <div id="media-results"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🎯 Extension Features</h3>
+            <button class="test-button" onclick="testPopupAccess()">Test Popup Access</button>
+            <button class="test-button" onclick="testBackgroundScript()">Test Background Script</button>
+            <button class="test-button" onclick="testFileAccess()">Test File Access</button>
+            <div id="feature-results"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🧹 Cleanup</h3>
+            <button class="test-button" onclick="clearAllResults()">Clear Results</button>
+            <button class="test-button" onclick="runAllTests()">Run All Tests</button>
+        </div>
+    </div>
+
+    <script>
+        function addResult(containerId, message, type = 'info') {
+            const container = document.getElementById(containerId);
+            const result = document.createElement('div');
+            result.className = `result ${type}`;
+            result.innerHTML = `${new Date().toLocaleTimeString()}: ${message}`;
+            container.appendChild(result);
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        function setStatus(message) {
+            document.getElementById('status').textContent = message;
+            console.log(`[STATUS] ${message}`);
+        }
+        
+        function clearAllResults() {
+            ['basic-results', 'media-results', 'feature-results'].forEach(id => {
+                document.getElementById(id).innerHTML = '';
+            });
+            setStatus('Results cleared');
+        }
+        
+        // Basic Extension Tests
+        function testExtensionLoaded() {
+            setStatus('Testing extension...');
+            
+            if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+                addResult('basic-results', `✅ Extension loaded (ID: ${chrome.runtime.id})`, 'success');
+                addResult('basic-results', `✅ Extension URL: ${chrome.runtime.getURL('')}`, 'info');
+            } else {
+                addResult('basic-results', '❌ Extension not loaded or not in extension context', 'error');
+            }
+        }
+        
+        function testChromeAPIs() {
+            setStatus('Testing Chrome APIs...');
+            
+            const apis = [
+                { name: 'chrome.runtime', api: chrome.runtime },
+                { name: 'chrome.storage', api: chrome.storage },
+                { name: 'chrome.tabs', api: chrome.tabs },
+                { name: 'chrome.downloads', api: chrome.downloads },
+                { name: 'chrome.notifications', api: chrome.notifications },
+                { name: 'chrome.scripting', api: chrome.scripting },
+                { name: 'chrome.desktopCapture', api: chrome.desktopCapture }
+            ];
+            
+            apis.forEach(({ name, api }) => {
+                if (api) {
+                    addResult('basic-results', `✅ ${name} available`, 'success');
+                } else {
+                    addResult('basic-results', `❌ ${name} not available`, 'error');
+                }
+            });
+        }
+        
+        async function testStorage() {
+            setStatus('Testing storage...');
+            
+            try {
+                // Test write
+                await chrome.storage.local.set({ testKey: 'testValue', timestamp: Date.now() });
+                addResult('basic-results', '✅ Storage write successful', 'success');
+                
+                // Test read
+                const result = await chrome.storage.local.get(['testKey', 'timestamp']);
+                if (result.testKey === 'testValue') {
+                    addResult('basic-results', '✅ Storage read successful', 'success');
+                } else {
+                    addResult('basic-results', '❌ Storage read failed', 'error');
+                }
+                
+                // Cleanup
+                await chrome.storage.local.remove(['testKey', 'timestamp']);
+                addResult('basic-results', '✅ Storage cleanup successful', 'success');
+                
+            } catch (error) {
+                addResult('basic-results', `❌ Storage test failed: ${error.message}`, 'error');
+            }
+        }
+        
+        // Media Access Tests
+        async function testCamera() {
+            setStatus('Testing camera access...');
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { width: 640, height: 480 }, 
+                    audio: false 
+                });
+                
+                addResult('media-results', '✅ Camera access granted', 'success');
+                addResult('media-results', `📹 Video track: ${stream.getVideoTracks()[0].label}`, 'info');
+                
+                // Stop stream immediately
+                stream.getTracks().forEach(track => track.stop());
+                
+            } catch (error) {
+                addResult('media-results', `❌ Camera access failed: ${error.name} - ${error.message}`, 'error');
+            }
+        }
+        
+        async function testMicrophone() {
+            setStatus('Testing microphone access...');
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: false, 
+                    audio: true 
+                });
+                
+                addResult('media-results', '✅ Microphone access granted', 'success');
+                addResult('media-results', `🎤 Audio track: ${stream.getAudioTracks()[0].label}`, 'info');
+                
+                // Stop stream immediately
+                stream.getTracks().forEach(track => track.stop());
+                
+            } catch (error) {
+                addResult('media-results', `❌ Microphone access failed: ${error.name} - ${error.message}`, 'error');
+            }
+        }
+        
+        async function testScreenShare() {
+            setStatus('Testing screen share...');
+            
+            try {
+                const stream = await navigator.mediaDevices.getDisplayMedia({ 
+                    video: true,
+                    audio: false
+                });
+                
+                addResult('media-results', '✅ Screen share access granted', 'success');
+                addResult('media-results', `🖥️ Screen track: ${stream.getVideoTracks()[0].label}`, 'info');
+                
+                // Stop stream immediately
+                stream.getTracks().forEach(track => track.stop());
+                
+            } catch (error) {
+                addResult('media-results', `❌ Screen share failed: ${error.name} - ${error.message}`, 'error');
+            }
+        }
+        
+        // Extension Feature Tests
+        function testPopupAccess() {
+            setStatus('Testing popup access...');
+            
+            try {
+                const popupUrl = chrome.runtime.getURL('popup-new.html');
+                addResult('feature-results', `✅ Popup URL: ${popupUrl}`, 'success');
+                
+                // Test if popup file is accessible
+                fetch(popupUrl)
+                    .then(response => {
+                        if (response.ok) {
+                            addResult('feature-results', '✅ Popup file accessible', 'success');
+                        } else {
+                            addResult('feature-results', '❌ Popup file not accessible', 'error');
+                        }
+                    })
+                    .catch(error => {
+                        addResult('feature-results', `❌ Popup fetch failed: ${error.message}`, 'error');
+                    });
+                    
+            } catch (error) {
+                addResult('feature-results', `❌ Popup test failed: ${error.message}`, 'error');
+            }
+        }
+        
+        function testBackgroundScript() {
+            setStatus('Testing background script...');
+            
+            try {
+                // Send a test message to background script
+                chrome.runtime.sendMessage({ action: 'getRecordingStatus' }, (response) => {
+                    if (chrome.runtime.lastError) {
+                        addResult('feature-results', `❌ Background script error: ${chrome.runtime.lastError.message}`, 'error');
+                    } else if (response) {
+                        addResult('feature-results', '✅ Background script responding', 'success');
+                        addResult('feature-results', `📊 Recording status: ${JSON.stringify(response)}`, 'info');
+                    } else {
+                        addResult('feature-results', '⚠️ Background script not responding', 'error');
+                    }
+                });
+                
+            } catch (error) {
+                addResult('feature-results', `❌ Background script test failed: ${error.message}`, 'error');
+            }
+        }
+        
+        function testFileAccess() {
+            setStatus('Testing file access...');
+            
+            const files = [
+                'popup-new.html',
+                'popup-new.css', 
+                'popup-new.js',
+                'background-new.js',
+                'icons/icon48.png'
+            ];
+            
+            files.forEach(file => {
+                try {
+                    const fileUrl = chrome.runtime.getURL(file);
+                    addResult('feature-results', `✅ File URL: ${file}`, 'info');
+                } catch (error) {
+                    addResult('feature-results', `❌ File access failed: ${file}`, 'error');
+                }
+            });
+        }
+        
+        async function runAllTests() {
+            setStatus('Running all tests...');
+            clearAllResults();
+            
+            // Run tests with delays
+            testExtensionLoaded();
+            await delay(500);
+            
+            testChromeAPIs();
+            await delay(500);
+            
+            await testStorage();
+            await delay(500);
+            
+            await testCamera();
+            await delay(500);
+            
+            await testMicrophone();
+            await delay(500);
+            
+            await testScreenShare();
+            await delay(500);
+            
+            testPopupAccess();
+            await delay(500);
+            
+            testBackgroundScript();
+            await delay(500);
+            
+            testFileAccess();
+            
+            setStatus('All tests completed!');
+        }
+        
+        function delay(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms));
+        }
+        
+        // Auto-run basic test on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                if (typeof chrome !== 'undefined' && chrome.runtime) {
+                    testExtensionLoaded();
+                } else {
+                    addResult('basic-results', 'ℹ️ Load this page from within the extension to run tests', 'info');
+                }
+            }, 1000);
+        });
+    </script>
+</body>
+</html>

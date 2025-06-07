@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Screen Recorder & Capture Pro",
-  "version": "2.0.0",
-  "description": "Professional screen recording and capture tool with advanced features, area selection, and high-quality output",
+  "version": "3.0.0",
+  "description": "Professional screen recording and capture tool with advanced annotation, editing, and sharing features",
   "permissions": [
     "activeTab",
     "desktopCapture",
@@ -10,7 +10,10 @@
     "downloads",
     "tabs",
     "scripting",
-    "notifications"
+    "notifications",
+    "clipboardRead",
+    "clipboardWrite",
+    "offscreen"
   ],
   "host_permissions": [
     "<all_urls>"
@@ -44,7 +47,24 @@
   },
   "web_accessible_resources": [
     {
-      "resources": ["area-selector.js", "popup-new.css", "icons/*"],
+      "resources": [
+        "area-selector.js",
+        "annotation-overlay.js",
+        "image-editor.js",
+        "full-page-capture.js",
+        "sharing-integration.js",
+        "effects-processor.js",
+        "stamp-library.js",
+        "pdf-export.js",
+        "gif-creator.js",
+        "popup-new.css",
+        "annotation.css",
+        "editor.css",
+        "history.html",
+        "history.js",
+        "icons/*",
+        "assets/*"
+      ],
       "matches": ["<all_urls>"]
     }
   ],

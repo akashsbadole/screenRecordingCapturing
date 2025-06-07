@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Window Capture Debug Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .debug-section {
+            margin: 30px 0;
+            padding: 25px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .debug-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #fff;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        .test-instructions {
+            background: rgba(33, 150, 243, 0.2);
+            border: 2px solid #2196F3;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .test-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin: 10px;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .test-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .console-output {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 15px 0;
+        }
+        
+        .error-log {
+            background: rgba(244, 67, 54, 0.2);
+            border: 2px solid #f44336;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .success-log {
+            background: rgba(76, 175, 80, 0.2);
+            border: 2px solid #4CAF50;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .debug-info {
+            background: rgba(255, 193, 7, 0.2);
+            border: 2px solid #FFC107;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .steps {
+            counter-reset: step-counter;
+        }
+        
+        .steps li {
+            counter-increment: step-counter;
+            margin: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #4CAF50;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Window Capture Debug Test</h1>
+        
+        <div class="debug-section">
+            <div class="debug-title">🐛 Debug "Invalid State" Error</div>
+            
+            <div class="debug-info">
+                <h4>Common Causes of "Invalid State" Error:</h4>
+                <ul>
+                    <li><strong>Video not ready:</strong> Trying to draw from video before it's loaded</li>
+                    <li><strong>Stream ended:</strong> Video stream was stopped before capture</li>
+                    <li><strong>Canvas context issues:</strong> Canvas not properly initialized</li>
+                    <li><strong>Timing issues:</strong> Operations happening too quickly</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="debug-section">
+            <div class="debug-title">🧪 Enhanced Debug Test</div>
+            
+            <div class="test-instructions">
+                <h3>Step-by-Step Debug Process:</h3>
+                <ol class="steps">
+                    <li><strong>Open DevTools:</strong> Press F12 to open browser console</li>
+                    <li><strong>Reload Extension:</strong> Go to chrome://extensions/ and reload</li>
+                    <li><strong>Test Window Capture:</strong> Click extension → Capture → "Capture Window"</li>
+                    <li><strong>Monitor Console:</strong> Watch for debug messages and errors</li>
+                    <li><strong>Check Error Details:</strong> Look for specific error messages</li>
+                </ol>
+            </div>
+            
+            <div style="text-align: center;">
+                <button class="test-button" onclick="openDevTools()">
+                    🔍 Open DevTools Guide
+                </button>
+                <button class="test-button" onclick="testWindowCapture()">
+                    🪟 Test Window Capture
+                </button>
+            </div>
+        </div>
+        
+        <div class="debug-section">
+            <div class="debug-title">📊 Expected Debug Output</div>
+            
+            <div class="success-log">
+                <h4>✅ Successful Window Capture Console Output:</h4>
+                <div class="console-output">
+Stream obtained, creating video element...<br>
+Video metadata loaded: 1920 x 1080 readyState: 4<br>
+Video can play, readyState: 4<br>
+Canvas created: 1920 x 1080<br>
+Video frame drawn to canvas successfully<br>
+Canvas converted to data URL, length: 2847392<br>
+Window capture successful, initiating download...
+                </div>
+            </div>
+            
+            <div class="error-log">
+                <h4>❌ Error Scenarios to Watch For:</h4>
+                <div class="console-output">
+Error drawing video to canvas: InvalidStateError<br>
+Video not ready for capture, readyState: 1<br>
+Video has invalid dimensions: 0x0<br>
+Failed to draw video frame: The video element's readyState is HAVE_NOTHING<br>
+Generated image data is invalid or too small
+                </div>
+            </div>
+        </div>
+        
+        <div class="debug-section">
+            <div class="debug-title">🔧 Troubleshooting Steps</div>
+            
+            <div class="debug-info">
+                <h4>If you see "Invalid State" error:</h4>
+                <ol>
+                    <li><strong>Check readyState:</strong> Should be 2 or higher (HAVE_CURRENT_DATA)</li>
+                    <li><strong>Verify dimensions:</strong> Video width/height should be > 0</li>
+                    <li><strong>Wait longer:</strong> Video might need more time to load</li>
+                    <li><strong>Check stream:</strong> Desktop capture stream might be invalid</li>
+                </ol>
+            </div>
+            
+            <div class="debug-info">
+                <h4>Enhanced Error Handling Added:</h4>
+                <ul>
+                    <li>✅ <strong>Extended timeout:</strong> 15 seconds instead of 10</li>
+                    <li>✅ <strong>ReadyState checking:</strong> Verify video is ready before drawing</li>
+                    <li>✅ <strong>Dimension validation:</strong> Check video dimensions are valid</li>
+                    <li>✅ <strong>Canvas error handling:</strong> Catch drawImage and toDataURL errors</li>
+                    <li>✅ <strong>Data validation:</strong> Verify generated image data is valid</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="debug-section">
+            <div class="debug-title">🎯 Test Different Scenarios</div>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                <div style="background: rgba(33, 150, 243, 0.2); padding: 15px; border-radius: 10px;">
+                    <h4>📱 Browser Windows</h4>
+                    <p>Test capturing different browser windows</p>
+                    <button class="test-button" onclick="openTestWindow()">Open Test Window</button>
+                </div>
+                <div style="background: rgba(156, 39, 176, 0.2); padding: 15px; border-radius: 10px;">
+                    <h4>💻 Application Windows</h4>
+                    <p>Test capturing other applications</p>
+                    <button class="test-button" onclick="showAppInstructions()">App Instructions</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="debug-section">
+            <div class="debug-title">📋 Debug Checklist</div>
+            
+            <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 10px;">
+                <h4>Before Testing:</h4>
+                <ul>
+                    <li>□ Extension reloaded</li>
+                    <li>□ DevTools console open</li>
+                    <li>□ Test windows available</li>
+                </ul>
+                
+                <h4>During Testing:</h4>
+                <ul>
+                    <li>□ Window selection dialog appears</li>
+                    <li>□ Console shows debug messages</li>
+                    <li>□ No red error messages</li>
+                </ul>
+                
+                <h4>After Testing:</h4>
+                <ul>
+                    <li>□ Screenshot downloads</li>
+                    <li>□ File contains captured window</li>
+                    <li>□ Success notification appears</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0; padding: 20px; background: rgba(255, 193, 7, 0.2); border-radius: 15px;">
+            <h3>🔍 Debug Mode Active</h3>
+            <p>Enhanced error handling and logging have been added to help identify the "invalid state" issue.</p>
+            <p><strong>Check the console for detailed debug information!</strong></p>
+        </div>
+    </div>
+
+    <script>
+        function openDevTools() {
+            alert('Press F12 to open DevTools, then go to the Console tab to see debug messages when testing window capture.');
+        }
+        
+        function testWindowCapture() {
+            alert('1. Make sure DevTools Console is open\n2. Click the extension icon\n3. Go to Capture tab\n4. Click "Capture Window"\n5. Watch console for debug messages');
+        }
+        
+        function openTestWindow() {
+            const testWindow = window.open('data:text/html,<h1 style="color:blue;">Test Window for Capture</h1><p>This window can be used to test window capture functionality.</p><div style="background:linear-gradient(45deg,red,blue,green,yellow);height:200px;margin:20px;"></div>', '_blank', 'width=600,height=400');
+            alert('Test window opened! You can now try to capture it with the window capture feature.');
+        }
+        
+        function showAppInstructions() {
+            alert('To test with other applications:\n1. Open Calculator, Notepad, or any other app\n2. Use window capture feature\n3. Select the application window from the list\n4. Check console for debug messages');
+        }
+        
+        // Monitor console for errors
+        const originalError = console.error;
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            
+            // Check for window capture related errors
+            const errorMessage = args.join(' ');
+            if (errorMessage.includes('invalid state') || errorMessage.includes('InvalidStateError')) {
+                console.log('🐛 DETECTED: Invalid state error in window capture');
+                console.log('📊 This error typically occurs when trying to draw from a video that is not ready');
+            }
+        };
+        
+        // Log page load
+        console.log('🔧 Window Capture Debug Test Page Loaded');
+        console.log('🐛 Enhanced error handling active for window capture debugging');
+        console.log('📊 Watch this console for detailed debug information during window capture');
+    </script>
+</body>
+</html>

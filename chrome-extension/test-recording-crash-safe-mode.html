@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recording Crash Safe Mode Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .safe-mode-section {
+            margin: 30px 0;
+            padding: 25px;
+            border: 2px solid rgba(76, 175, 80, 0.5);
+            border-radius: 15px;
+            background: rgba(76, 175, 80, 0.1);
+        }
+        
+        .safe-mode-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #4CAF50;
+            text-align: center;
+            border-bottom: 2px solid rgba(76, 175, 80, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        .crash-prevention {
+            background: rgba(33, 150, 243, 0.2);
+            border: 2px solid #2196F3;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .test-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin: 10px;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .test-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .console-output {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 15px 0;
+        }
+        
+        .steps {
+            counter-reset: step-counter;
+        }
+        
+        .steps li {
+            counter-increment: step-counter;
+            margin: 15px 0;
+            padding-left: 35px;
+            position: relative;
+            line-height: 1.5;
+        }
+        
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #4CAF50;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .status-safe {
+            background: rgba(76, 175, 80, 0.8);
+            color: white;
+        }
+        
+        .status-crashed {
+            background: rgba(244, 67, 54, 0.8);
+            color: white;
+        }
+        
+        .status-testing {
+            background: rgba(255, 193, 7, 0.8);
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🛡️ Recording Safe Mode Test</h1>
+        
+        <div class="safe-mode-section">
+            <div class="safe-mode-title">
+                🛡️ Safe Mode Recording Implementation
+                <span id="safeStatus" class="status-indicator status-safe">ACTIVE</span>
+            </div>
+            
+            <div class="crash-prevention">
+                <h4>🔧 Crash Prevention Measures:</h4>
+                <ul>
+                    <li><strong>Minimal Configuration:</strong> Simplified recording setup with basic options</li>
+                    <li><strong>Audio Disabled:</strong> No audio processing to prevent complex stream issues</li>
+                    <li><strong>Safe MIME Type:</strong> Using most compatible video/webm format</li>
+                    <li><strong>Step-by-Step Logging:</strong> Detailed console output for each operation</li>
+                    <li><strong>Error Isolation:</strong> Each step wrapped in try-catch blocks</li>
+                    <li><strong>Resource Cleanup:</strong> Proper stream cleanup on any failure</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="safe-mode-section">
+            <div class="safe-mode-title">🧪 Safe Mode Test Process</div>
+            
+            <ol class="steps">
+                <li><strong>Open DevTools Console:</strong> Press F12 to monitor detailed logging</li>
+                <li><strong>Reload Extension:</strong> Ensure latest safe mode code is loaded</li>
+                <li><strong>Test Recording:</strong> Click "Start Recording" in extension</li>
+                <li><strong>Monitor Console:</strong> Watch for step-by-step progress messages</li>
+                <li><strong>Check for Crashes:</strong> Extension should remain functional</li>
+            </ol>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <button class="test-button" onclick="openDevTools()">
+                    🔍 Open DevTools
+                </button>
+                <button class="test-button" onclick="testRecordingSafeMode()">
+                    🎬 Test Safe Recording
+                </button>
+                <button class="test-button" onclick="reloadExtension()">
+                    🔄 Reload Extension
+                </button>
+            </div>
+        </div>
+        
+        <div class="safe-mode-section">
+            <div class="safe-mode-title">📊 Expected Safe Mode Console Output</div>
+            
+            <div class="crash-prevention">
+                <h4>✅ Successful Recording Start:</h4>
+                <div class="console-output">
+🎬 SAFE MODE: Starting minimal screen recording...
+🎬 Step 1: Requesting desktop capture...
+🎬 Desktop capture granted, streamId: [stream-id]
+🎬 Step 2: Creating media stream...
+🎬 Step 3: Media stream created successfully
+🎬 Step 4: Creating MediaRecorder...
+🎬 Using MIME type: video/webm;codecs=vp8
+🎬 Step 5: Starting recording...
+🎬 Recording started successfully!
+🎬 Data available, size: [bytes]
+                </div>
+            </div>
+            
+            <div style="background: rgba(244, 67, 54, 0.2); border: 2px solid #f44336; padding: 20px; border-radius: 15px; margin: 20px 0;">
+                <h4>❌ If Crash Still Occurs:</h4>
+                <div class="console-output">
+🎬 CRITICAL ERROR in startRecording: [error details]
+🎬 Desktop capture API error: [specific error]
+🎬 MediaRecorder error: [specific error]
+                </div>
+                <p>The safe mode will show exactly where the crash occurs with detailed error information.</p>
+            </div>
+        </div>
+        
+        <div class="safe-mode-section">
+            <div class="safe-mode-title">🎯 Safe Mode Features</div>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px;">
+                <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 10px;">
+                    <h4>🔧 Simplified Setup</h4>
+                    <ul>
+                        <li>Basic video constraints (1920x1080, 30fps)</li>
+                        <li>No audio processing initially</li>
+                        <li>Safe bitrate (2.5 Mbps)</li>
+                        <li>Compatible MIME type (video/webm)</li>
+                    </ul>
+                </div>
+                
+                <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 10px;">
+                    <h4>📊 Enhanced Logging</h4>
+                    <ul>
+                        <li>Step-by-step progress tracking</li>
+                        <li>Detailed error information</li>
+                        <li>Resource usage monitoring</li>
+                        <li>Crash point identification</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="safe-mode-section">
+            <div class="safe-mode-title">🔍 Troubleshooting Guide</div>
+            
+            <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 10px;">
+                <h4>If Extension Still Crashes:</h4>
+                
+                <div style="margin: 15px 0;">
+                    <strong>🎬 Check Console Messages:</strong>
+                    <ul>
+                        <li>Look for the last successful step before crash</li>
+                        <li>Check for specific error messages</li>
+                        <li>Note any browser API errors</li>
+                    </ul>
+                </div>
+                
+                <div style="margin: 15px 0;">
+                    <strong>🔧 Browser Issues:</strong>
+                    <ul>
+                        <li>Update Chrome to latest version</li>
+                        <li>Clear browser cache and data</li>
+                        <li>Disable other extensions temporarily</li>
+                        <li>Try incognito mode</li>
+                    </ul>
+                </div>
+                
+                <div style="margin: 15px 0;">
+                    <strong>🛡️ System Issues:</strong>
+                    <ul>
+                        <li>Check available memory</li>
+                        <li>Close other applications</li>
+                        <li>Restart browser completely</li>
+                        <li>Check for system updates</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0; padding: 20px; background: rgba(76, 175, 80, 0.2); border-radius: 15px;">
+            <h3>🛡️ Safe Mode Recording Active</h3>
+            <p>The extension now uses a minimal, crash-resistant recording implementation with comprehensive error handling and detailed logging.</p>
+            <p><strong>Monitor the console for step-by-step progress when testing!</strong></p>
+        </div>
+    </div>
+
+    <script>
+        function openDevTools() {
+            alert('Press F12 to open DevTools, then go to the Console tab.\n\nLook for messages starting with "🎬" when testing recording.\n\nThese will show exactly what step the recording process reaches before any potential crash.');
+        }
+        
+        function testRecordingSafeMode() {
+            alert('Safe Mode Recording Test:\n\n1. Make sure DevTools Console is open\n2. Click the extension icon\n3. Go to Recording tab\n4. Click "Start Recording"\n5. Watch console for detailed step-by-step messages\n\nThe safe mode will show exactly where any crash occurs!');
+        }
+        
+        function reloadExtension() {
+            window.open('chrome://extensions/', '_blank');
+        }
+        
+        // Monitor extension health
+        let extensionHealthy = true;
+        
+        function checkExtensionHealth() {
+            try {
+                if (chrome && chrome.runtime && chrome.runtime.id) {
+                    if (!extensionHealthy) {
+                        console.log('✅ Extension recovered');
+                        document.getElementById('safeStatus').textContent = 'RECOVERED';
+                        document.getElementById('safeStatus').className = 'status-indicator status-safe';
+                        extensionHealthy = true;
+                    }
+                } else {
+                    if (extensionHealthy) {
+                        console.error('❌ Extension crash detected!');
+                        document.getElementById('safeStatus').textContent = 'CRASHED';
+                        document.getElementById('safeStatus').className = 'status-indicator status-crashed';
+                        extensionHealthy = false;
+                    }
+                }
+            } catch (error) {
+                if (extensionHealthy) {
+                    console.error('❌ Extension error:', error);
+                    document.getElementById('safeStatus').textContent = 'ERROR';
+                    document.getElementById('safeStatus').className = 'status-indicator status-crashed';
+                    extensionHealthy = false;
+                }
+            }
+        }
+        
+        // Check extension health every 3 seconds
+        setInterval(checkExtensionHealth, 3000);
+        
+        // Initial health check
+        setTimeout(checkExtensionHealth, 1000);
+        
+        console.log('🛡️ Safe Mode Recording Test Page Loaded');
+        console.log('🎬 Monitor console for detailed recording progress when testing');
+        console.log('🔍 Look for messages starting with "🎬" for step-by-step tracking');
+    </script>
+</body>
+</html>

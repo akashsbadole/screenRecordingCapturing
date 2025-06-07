@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extension Quick Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .test-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .test-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .test-button:hover {
+            background: #45a049;
+        }
+        
+        .test-button.danger {
+            background: #f44336;
+        }
+        
+        .test-button.danger:hover {
+            background: #da190b;
+        }
+        
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        
+        .status {
+            text-align: center;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Screen Recorder Extension Quick Test</h1>
+    
+    <div class="status" id="status">Ready to test...</div>
+    
+    <div class="test-card">
+        <h3>📋 Basic Tests</h3>
+        <button class="test-button" onclick="testExtensionLoaded()">Test Extension Loaded</button>
+        <button class="test-button" onclick="testPermissions()">Test Permissions</button>
+        <button class="test-button" onclick="testAPIs()">Test Chrome APIs</button>
+        <div id="basic-results"></div>
+    </div>
+    
+    <div class="test-card">
+        <h3>🎥 Media Tests</h3>
+        <button class="test-button" onclick="testCamera()">Test Camera Access</button>
+        <button class="test-button" onclick="testMicrophone()">Test Microphone</button>
+        <button class="test-button" onclick="testScreenCapture()">Test Screen Capture</button>
+        <div id="media-results"></div>
+    </div>
+    
+    <div class="test-card">
+        <h3>🔧 Extension Functions</h3>
+        <button class="test-button" onclick="testPopup()">Test Popup</button>
+        <button class="test-button" onclick="testStorage()">Test Storage</button>
+        <button class="test-button" onclick="testDownloads()">Test Downloads</button>
+        <div id="function-results"></div>
+    </div>
+    
+    <div class="test-card">
+        <h3>🗑️ Cleanup</h3>
+        <button class="test-button danger" onclick="clearResults()">Clear All Results</button>
+        <button class="test-button" onclick="runAllTests()">Run All Tests</button>
+    </div>
+
+    <script>
+        function addResult(containerId, message, type = 'info') {
+            const container = document.getElementById(containerId);
+            const result = document.createElement('div');
+            result.className = `result ${type}`;
+            result.innerHTML = `${new Date().toLocaleTimeString()}: ${message}`;
+            container.appendChild(result);
+            
+            // Auto-scroll to bottom
+            result.scrollIntoView({ behavior: 'smooth' });
+        }
+        
+        function setStatus(message) {
+            document.getElementById('status').textContent = message;
+        }
+        
+        function clearResults() {
+            ['basic-results', 'media-results', 'function-results'].forEach(id => {
+                document.getElementById(id).innerHTML = '';
+            });
+            setStatus('Results cleared');
+        }
+        
+        async function testExtensionLoaded() {
+            setStatus('Testing extension...');
+            
+            if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+                addResult('basic-results', `✅ Extension loaded successfully (ID: ${chrome.runtime.id})`, 'success');
+            } else {
+                addResult('basic-results', '❌ Extension not loaded or not in extension context', 'error');
+            }
+        }
+        
+        async function testPermissions() {
+            setStatus('Testing permissions...');
+            
+            if (!chrome.permissions) {
+                addResult('basic-results', '❌ Permissions API not available', 'error');
+                return;
+            }
+            
+            const permissions = ['activeTab', 'desktopCapture', 'storage', 'downloads', 'tabs', 'scripting', 'notifications', 'contextMenus'];
+            
+            for (const permission of permissions) {
+                try {
+                    const hasPermission = await chrome.permissions.contains({ permissions: [permission] });
+                    if (hasPermission) {
+                        addResult('basic-results', `✅ Permission: ${permission}`, 'success');
+                    } else {
+                        addResult('basic-results', `⚠️ Missing permission: ${permission}`, 'error');
+                    }
+                } catch (error) {
+                    addResult('basic-results', `❌ Error checking ${permission}: ${error.message}`, 'error');
+                }
+            }
+        }
+        
+        async function testAPIs() {
+            setStatus('Testing Chrome APIs...');
+            
+            const apis = [
+                { name: 'chrome.tabs', api: chrome.tabs },
+                { name: 'chrome.storage', api: chrome.storage },
+                { name: 'chrome.downloads', api: chrome.downloads },
+                { name: 'chrome.notifications', api: chrome.notifications },
+                { name: 'chrome.contextMenus', api: chrome.contextMenus },
+                { name: 'chrome.desktopCapture', api: chrome.desktopCapture },
+                { name: 'chrome.scripting', api: chrome.scripting }
+            ];
+            
+            apis.forEach(({ name, api }) => {
+                if (api) {
+                    addResult('basic-results', `✅ API available: ${name}`, 'success');
+                } else {
+                    addResult('basic-results', `❌ API missing: ${name}`, 'error');
+                }
+            });
+        }
+        
+        async function testCamera() {
+            setStatus('Testing camera access...');
+            
+            if (!navigator.mediaDevices) {
+                addResult('media-results', '❌ MediaDevices API not available', 'error');
+                return;
+            }
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+                addResult('media-results', '✅ Camera access granted', 'success');
+                
+                // Stop the stream immediately
+                stream.getTracks().forEach(track => track.stop());
+            } catch (error) {
+                addResult('media-results', `❌ Camera access failed: ${error.name} - ${error.message}`, 'error');
+            }
+        }
+        
+        async function testMicrophone() {
+            setStatus('Testing microphone access...');
+            
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: false, audio: true });
+                addResult('media-results', '✅ Microphone access granted', 'success');
+                
+                // Stop the stream immediately
+                stream.getTracks().forEach(track => track.stop());
+            } catch (error) {
+                addResult('media-results', `❌ Microphone access failed: ${error.name} - ${error.message}`, 'error');
+            }
+        }
+        
+        async function testScreenCapture() {
+            setStatus('Testing screen capture...');
+            
+            try {
+                const stream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                addResult('media-results', '✅ Screen capture access granted', 'success');
+                
+                // Stop the stream immediately
+                stream.getTracks().forEach(track => track.stop());
+            } catch (error) {
+                addResult('media-results', `❌ Screen capture failed: ${error.name} - ${error.message}`, 'error');
+            }
+        }
+        
+        async function testPopup() {
+            setStatus('Testing popup...');
+            
+            try {
+                const popupUrl = chrome.runtime.getURL('popup-new.html');
+                addResult('function-results', `✅ Popup URL accessible: ${popupUrl}`, 'success');
+                
+                // Test if popup file exists by trying to fetch it
+                const response = await fetch(popupUrl);
+                if (response.ok) {
+                    addResult('function-results', '✅ Popup file exists and accessible', 'success');
+                } else {
+                    addResult('function-results', '❌ Popup file not accessible', 'error');
+                }
+            } catch (error) {
+                addResult('function-results', `❌ Popup test failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testStorage() {
+            setStatus('Testing storage...');
+            
+            try {
+                // Test write
+                await chrome.storage.local.set({ testKey: 'testValue' });
+                
+                // Test read
+                const result = await chrome.storage.local.get(['testKey']);
+                
+                if (result.testKey === 'testValue') {
+                    addResult('function-results', '✅ Storage read/write working', 'success');
+                } else {
+                    addResult('function-results', '❌ Storage read/write failed', 'error');
+                }
+                
+                // Cleanup
+                await chrome.storage.local.remove(['testKey']);
+            } catch (error) {
+                addResult('function-results', `❌ Storage test failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function testDownloads() {
+            setStatus('Testing downloads...');
+            
+            if (!chrome.downloads) {
+                addResult('function-results', '❌ Downloads API not available', 'error');
+                return;
+            }
+            
+            try {
+                // Create a simple test blob
+                const blob = new Blob(['Test file content'], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                
+                // Test download (this will actually download a small test file)
+                const downloadId = await chrome.downloads.download({
+                    url: url,
+                    filename: 'extension-test.txt',
+                    saveAs: false
+                });
+                
+                addResult('function-results', `✅ Download test successful (ID: ${downloadId})`, 'success');
+                
+                // Cleanup
+                URL.revokeObjectURL(url);
+            } catch (error) {
+                addResult('function-results', `❌ Download test failed: ${error.message}`, 'error');
+            }
+        }
+        
+        async function runAllTests() {
+            setStatus('Running all tests...');
+            clearResults();
+            
+            await testExtensionLoaded();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testPermissions();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testAPIs();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testCamera();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testMicrophone();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testScreenCapture();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testPopup();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testStorage();
+            await new Promise(resolve => setTimeout(resolve, 500));
+            
+            await testDownloads();
+            
+            setStatus('All tests completed!');
+        }
+        
+        // Auto-run basic test on load
+        window.addEventListener('load', () => {
+            setTimeout(testExtensionLoaded, 1000);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Permission Fix Guide</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .fix-section {
+            margin: 30px 0;
+            padding: 25px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .fix-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #fff;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        .permission-issue {
+            background: rgba(244, 67, 54, 0.2);
+            border: 2px solid #f44336;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .permission-fix {
+            background: rgba(76, 175, 80, 0.2);
+            border: 2px solid #4CAF50;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .test-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin: 10px;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .test-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .steps {
+            counter-reset: step-counter;
+        }
+        
+        .steps li {
+            counter-increment: step-counter;
+            margin: 15px 0;
+            padding-left: 35px;
+            position: relative;
+            line-height: 1.5;
+        }
+        
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #4CAF50;
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+            font-weight: bold;
+        }
+        
+        .browser-specific {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .browser-card {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .status-working {
+            background: rgba(76, 175, 80, 0.8);
+            color: white;
+        }
+        
+        .status-blocked {
+            background: rgba(244, 67, 54, 0.8);
+            color: white;
+        }
+        
+        .status-unknown {
+            background: rgba(255, 193, 7, 0.8);
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>📹 Camera Permission Fix Guide</h1>
+        
+        <div class="fix-section">
+            <div class="fix-title">
+                🚨 Camera Permission Status
+                <span id="cameraStatus" class="status-indicator status-unknown">CHECKING...</span>
+            </div>
+            
+            <div class="permission-issue">
+                <h4>❌ Common Camera Permission Issues:</h4>
+                <ul>
+                    <li><strong>Permission Denied:</strong> Browser blocked camera access</li>
+                    <li><strong>No Camera Found:</strong> No camera device detected</li>
+                    <li><strong>Camera Busy:</strong> Another application is using the camera</li>
+                    <li><strong>Security Policy:</strong> Browser security settings block access</li>
+                    <li><strong>Hardware Error:</strong> Camera driver or hardware issues</li>
+                </ul>
+            </div>
+            
+            <div class="permission-fix">
+                <h4>✅ Enhanced Camera Permission Handling:</h4>
+                <ul>
+                    <li><strong>Device Detection:</strong> Check for available cameras before access</li>
+                    <li><strong>Progressive Fallback:</strong> Try multiple constraint levels</li>
+                    <li><strong>Detailed Error Messages:</strong> Specific guidance for each error type</li>
+                    <li><strong>Permission Help:</strong> Step-by-step instructions for granting access</li>
+                    <li><strong>Browser Compatibility:</strong> Support for all modern browsers</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="fix-section">
+            <div class="fix-title">🔧 How to Fix Camera Permissions</div>
+            
+            <div class="browser-specific">
+                <div class="browser-card">
+                    <h4>🌐 Chrome/Edge</h4>
+                    <ol class="steps">
+                        <li>Look for camera icon in address bar</li>
+                        <li>Click it and select "Always allow"</li>
+                        <li>Or go to Settings > Privacy > Camera</li>
+                        <li>Add this extension to allowed sites</li>
+                    </ol>
+                </div>
+                
+                <div class="browser-card">
+                    <h4>🦊 Firefox</h4>
+                    <ol class="steps">
+                        <li>Click shield icon in address bar</li>
+                        <li>Select "Allow" for camera access</li>
+                        <li>Or go to Settings > Privacy > Permissions</li>
+                        <li>Manage camera permissions</li>
+                    </ol>
+                </div>
+            </div>
+        </div>
+        
+        <div class="fix-section">
+            <div class="fix-title">🧪 Camera Permission Test</div>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <button class="test-button" onclick="testCameraAccess()">
+                    📹 Test Camera Access
+                </button>
+                <button class="test-button" onclick="checkCameraDevices()">
+                    🔍 Check Camera Devices
+                </button>
+                <button class="test-button" onclick="openCameraSettings()">
+                    ⚙️ Open Camera Settings
+                </button>
+            </div>
+            
+            <div id="testResults" style="margin: 20px 0; display: none;">
+                <div id="testOutput"></div>
+            </div>
+        </div>
+        
+        <div class="fix-section">
+            <div class="fix-title">📋 Step-by-Step Permission Fix</div>
+            
+            <ol class="steps">
+                <li><strong>Check Camera Hardware:</strong> Ensure your camera is connected and working in other applications</li>
+                <li><strong>Close Other Apps:</strong> Close Zoom, Skype, Teams, or other apps using the camera</li>
+                <li><strong>Grant Browser Permission:</strong> Allow camera access when prompted by the browser</li>
+                <li><strong>Check Browser Settings:</strong> Go to browser settings and ensure camera access is allowed</li>
+                <li><strong>Test Extension:</strong> Use the "Test Camera" button in the extension popup</li>
+                <li><strong>Restart if Needed:</strong> Restart your browser if permission changes don't take effect</li>
+            </ol>
+        </div>
+        
+        <div class="fix-section">
+            <div class="fix-title">🎯 Troubleshooting Guide</div>
+            
+            <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 10px;">
+                <h4>If Camera Still Doesn't Work:</h4>
+                
+                <div style="margin: 15px 0;">
+                    <strong>🔍 Check System Camera:</strong>
+                    <ul>
+                        <li>Open Camera app on Windows/Mac to verify camera works</li>
+                        <li>Check Device Manager (Windows) or System Preferences (Mac)</li>
+                        <li>Update camera drivers if needed</li>
+                    </ul>
+                </div>
+                
+                <div style="margin: 15px 0;">
+                    <strong>🌐 Browser-Specific Issues:</strong>
+                    <ul>
+                        <li>Clear browser cache and cookies</li>
+                        <li>Disable other extensions temporarily</li>
+                        <li>Try incognito/private mode</li>
+                        <li>Update browser to latest version</li>
+                    </ul>
+                </div>
+                
+                <div style="margin: 15px 0;">
+                    <strong>🔒 Security Software:</strong>
+                    <ul>
+                        <li>Check antivirus camera protection settings</li>
+                        <li>Temporarily disable camera privacy software</li>
+                        <li>Add browser to security software exceptions</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0; padding: 20px; background: rgba(76, 175, 80, 0.2); border-radius: 15px;">
+            <h3>📹 Enhanced Camera Support</h3>
+            <p>The extension now has improved camera permission handling with detailed error messages and troubleshooting guidance.</p>
+            <p><strong>Test your camera access using the extension's "Test Camera" feature!</strong></p>
+        </div>
+    </div>
+
+    <script>
+        let cameraAvailable = false;
+        
+        async function testCameraAccess() {
+            const statusElement = document.getElementById('cameraStatus');
+            const resultsElement = document.getElementById('testResults');
+            const outputElement = document.getElementById('testOutput');
+            
+            try {
+                statusElement.textContent = 'TESTING...';
+                statusElement.className = 'status-indicator status-unknown';
+                
+                // Check if getUserMedia is available
+                if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                    throw new Error('Camera API not supported in this browser');
+                }
+                
+                // Test camera access
+                const stream = await navigator.mediaDevices.getUserMedia({
+                    video: true,
+                    audio: false
+                });
+                
+                // Get camera info
+                const videoTrack = stream.getVideoTracks()[0];
+                const settings = videoTrack.getSettings();
+                
+                // Stop stream immediately
+                stream.getTracks().forEach(track => track.stop());
+                
+                // Show success
+                statusElement.textContent = 'WORKING';
+                statusElement.className = 'status-indicator status-working';
+                cameraAvailable = true;
+                
+                outputElement.innerHTML = `
+                    <div class="permission-fix">
+                        <h4>✅ Camera Access Successful!</h4>
+                        <p><strong>Device:</strong> ${videoTrack.label || 'Unknown Camera'}</p>
+                        <p><strong>Resolution:</strong> ${settings.width}x${settings.height}</p>
+                        <p><strong>Frame Rate:</strong> ${settings.frameRate}fps</p>
+                        <p>Your camera is working properly with this browser!</p>
+                    </div>
+                `;
+                
+            } catch (error) {
+                statusElement.textContent = 'BLOCKED';
+                statusElement.className = 'status-indicator status-blocked';
+                cameraAvailable = false;
+                
+                let errorMessage = '';
+                let solution = '';
+                
+                switch (error.name) {
+                    case 'NotAllowedError':
+                        errorMessage = 'Camera permission denied by user or browser policy.';
+                        solution = 'Please allow camera access when prompted, or check browser settings to grant permission.';
+                        break;
+                    case 'NotFoundError':
+                        errorMessage = 'No camera device found.';
+                        solution = 'Please connect a camera to your computer and ensure it\'s working properly.';
+                        break;
+                    case 'NotReadableError':
+                        errorMessage = 'Camera is busy or hardware error.';
+                        solution = 'Please close other applications using the camera and try again.';
+                        break;
+                    default:
+                        errorMessage = `Camera error: ${error.name || 'Unknown'}`;
+                        solution = `Error details: ${error.message}`;
+                }
+                
+                outputElement.innerHTML = `
+                    <div class="permission-issue">
+                        <h4>❌ Camera Access Failed</h4>
+                        <p><strong>Error:</strong> ${errorMessage}</p>
+                        <p><strong>Solution:</strong> ${solution}</p>
+                    </div>
+                `;
+            }
+            
+            resultsElement.style.display = 'block';
+        }
+        
+        async function checkCameraDevices() {
+            const outputElement = document.getElementById('testOutput');
+            const resultsElement = document.getElementById('testResults');
+            
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const videoDevices = devices.filter(device => device.kind === 'videoinput');
+                
+                let deviceList = '';
+                if (videoDevices.length > 0) {
+                    deviceList = videoDevices.map((device, index) => 
+                        `<li>Camera ${index + 1}: ${device.label || 'Unknown Camera'}</li>`
+                    ).join('');
+                } else {
+                    deviceList = '<li>No camera devices found</li>';
+                }
+                
+                outputElement.innerHTML = `
+                    <div class="permission-fix">
+                        <h4>📹 Available Camera Devices (${videoDevices.length})</h4>
+                        <ul>${deviceList}</ul>
+                        ${videoDevices.length === 0 ? 
+                            '<p><strong>Note:</strong> If you have a camera but it\'s not listed, check your camera connection and drivers.</p>' : 
+                            '<p>These cameras are available for use by the extension.</p>'
+                        }
+                    </div>
+                `;
+                
+            } catch (error) {
+                outputElement.innerHTML = `
+                    <div class="permission-issue">
+                        <h4>❌ Could Not Check Devices</h4>
+                        <p>Error: ${error.message}</p>
+                    </div>
+                `;
+            }
+            
+            resultsElement.style.display = 'block';
+        }
+        
+        function openCameraSettings() {
+            const isChrome = /Chrome/.test(navigator.userAgent);
+            const isFirefox = /Firefox/.test(navigator.userAgent);
+            
+            if (isChrome) {
+                alert('Chrome Camera Settings:\n\n1. Click the camera icon in the address bar\n2. Or go to Settings > Privacy and Security > Site Settings > Camera\n3. Ensure this site has camera access');
+            } else if (isFirefox) {
+                alert('Firefox Camera Settings:\n\n1. Click the shield icon in the address bar\n2. Or go to Settings > Privacy & Security > Permissions > Camera\n3. Manage camera permissions for this site');
+            } else {
+                alert('Camera Settings:\n\nPlease check your browser\'s privacy/security settings to manage camera permissions for this extension.');
+            }
+        }
+        
+        // Auto-test camera on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(testCameraAccess, 1000);
+        });
+        
+        console.log('📹 Camera Permission Fix Guide Loaded');
+        console.log('🔧 Enhanced camera permission handling active');
+    </script>
+</body>
+</html>

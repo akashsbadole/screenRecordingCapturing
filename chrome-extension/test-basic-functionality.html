@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Basic Functionality Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f0f2f5;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #f9f9f9;
+        }
+        
+        .test-button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px;
+            font-size: 14px;
+        }
+        
+        .test-button:hover {
+            background: #45a049;
+        }
+        
+        .result {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        
+        .status {
+            text-align: center;
+            font-weight: bold;
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 5px;
+            background: #e9ecef;
+        }
+        
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            color: #856404;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Basic Extension Functionality Test</h1>
+        
+        <div class="instructions">
+            <strong>📋 Quick Test Instructions:</strong>
+            <ol>
+                <li>Make sure the Screen Recorder extension is loaded in Chrome</li>
+                <li>Click the extension icon in the toolbar</li>
+                <li>Try the basic recording and capture features</li>
+                <li>Check that no errors appear in the console</li>
+            </ol>
+        </div>
+        
+        <div class="status" id="status">Ready to test basic functionality...</div>
+        
+        <div class="test-section">
+            <h3>🎬 Core Recording Test</h3>
+            <p>Test the basic screen recording functionality:</p>
+            <button class="test-button" onclick="testRecording()">Test Recording Feature</button>
+            <div id="recording-results"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📸 Core Capture Test</h3>
+            <p>Test the basic screenshot capture functionality:</p>
+            <button class="test-button" onclick="testCapture()">Test Capture Feature</button>
+            <div id="capture-results"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>📹 Camera Test</h3>
+            <p>Test the camera functionality:</p>
+            <button class="test-button" onclick="testCamera()">Test Camera Feature</button>
+            <div id="camera-results"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>⚙️ Extension Status</h3>
+            <p>Check if the extension is properly loaded:</p>
+            <button class="test-button" onclick="checkExtension()">Check Extension Status</button>
+            <div id="extension-results"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>🧹 Clear Results</h3>
+            <button class="test-button" onclick="clearAllResults()">Clear All Results</button>
+        </div>
+    </div>
+
+    <script>
+        function addResult(containerId, message, type = 'info') {
+            const container = document.getElementById(containerId);
+            const result = document.createElement('div');
+            result.className = `result ${type}`;
+            result.innerHTML = `${new Date().toLocaleTimeString()}: ${message}`;
+            container.appendChild(result);
+            console.log(`[${type.toUpperCase()}] ${message}`);
+        }
+        
+        function setStatus(message) {
+            document.getElementById('status').textContent = message;
+            console.log(`[STATUS] ${message}`);
+        }
+        
+        function clearAllResults() {
+            ['recording-results', 'capture-results', 'camera-results', 'extension-results'].forEach(id => {
+                document.getElementById(id).innerHTML = '';
+            });
+            setStatus('Results cleared');
+        }
+        
+        function testRecording() {
+            setStatus('Testing recording functionality...');
+            addResult('recording-results', 'ℹ️ To test recording:', 'info');
+            addResult('recording-results', '1. Click the extension icon in toolbar', 'info');
+            addResult('recording-results', '2. Go to Recording tab', 'info');
+            addResult('recording-results', '3. Click "Start Recording"', 'info');
+            addResult('recording-results', '4. Select screen/window to record', 'info');
+            addResult('recording-results', '5. Recording should start without errors', 'info');
+            addResult('recording-results', '✅ If recording starts, basic functionality is working!', 'success');
+        }
+        
+        function testCapture() {
+            setStatus('Testing capture functionality...');
+            addResult('capture-results', 'ℹ️ To test capture:', 'info');
+            addResult('capture-results', '1. Click the extension icon in toolbar', 'info');
+            addResult('capture-results', '2. Go to Capture tab', 'info');
+            addResult('capture-results', '3. Click "Capture Full Screen"', 'info');
+            addResult('capture-results', '4. Screenshot should download automatically', 'info');
+            addResult('capture-results', '✅ If screenshot downloads, capture is working!', 'success');
+        }
+        
+        function testCamera() {
+            setStatus('Testing camera functionality...');
+            addResult('camera-results', 'ℹ️ To test camera:', 'info');
+            addResult('camera-results', '1. Click the extension icon in toolbar', 'info');
+            addResult('camera-results', '2. Go to Recording tab', 'info');
+            addResult('camera-results', '3. Click "Test Camera"', 'info');
+            addResult('camera-results', '4. Allow camera permission if prompted', 'info');
+            addResult('camera-results', '5. Should show camera details or helpful error', 'info');
+            addResult('camera-results', '✅ If camera test works, camera functionality is working!', 'success');
+        }
+        
+        function checkExtension() {
+            setStatus('Checking extension status...');
+            
+            if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+                addResult('extension-results', `✅ Extension loaded (ID: ${chrome.runtime.id})`, 'success');
+                
+                // Test background script communication
+                try {
+                    chrome.runtime.sendMessage({ action: 'getRecordingStatus' }, (response) => {
+                        if (chrome.runtime.lastError) {
+                            addResult('extension-results', `❌ Background script error: ${chrome.runtime.lastError.message}`, 'error');
+                        } else {
+                            addResult('extension-results', '✅ Background script responding', 'success');
+                            addResult('extension-results', `📊 Response: ${JSON.stringify(response)}`, 'info');
+                        }
+                    });
+                } catch (error) {
+                    addResult('extension-results', `❌ Communication error: ${error.message}`, 'error');
+                }
+                
+                // Check popup file
+                try {
+                    const popupUrl = chrome.runtime.getURL('popup-new.html');
+                    addResult('extension-results', `✅ Popup URL: ${popupUrl}`, 'success');
+                } catch (error) {
+                    addResult('extension-results', `❌ Popup URL error: ${error.message}`, 'error');
+                }
+                
+            } else {
+                addResult('extension-results', '❌ Extension not loaded or not in extension context', 'error');
+                addResult('extension-results', 'ℹ️ Make sure to load this page from the extension or test the extension directly', 'info');
+            }
+        }
+        
+        // Auto-run basic check on load
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                addResult('extension-results', '🚀 Basic functionality test page loaded', 'info');
+                addResult('extension-results', '📝 Use the buttons above to test each feature', 'info');
+                
+                // Auto-check extension if in extension context
+                if (typeof chrome !== 'undefined' && chrome.runtime) {
+                    checkExtension();
+                }
+            }, 1000);
+        });
+        
+        // Monitor for console errors
+        window.addEventListener('error', (event) => {
+            addResult('extension-results', `❌ JavaScript Error: ${event.message}`, 'error');
+        });
+    </script>
+</body>
+</html>

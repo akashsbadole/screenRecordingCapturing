@@ -12,8 +12,8 @@ body {
 }
 
 .container {
-    width: 380px;
-    min-height: 500px;
+    width: 420px;
+    min-height: 600px;
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
     border-radius: 16px;
@@ -77,6 +77,51 @@ body {
     50% { opacity: 0.5; }
 }
 
+/* Mode Tabs */
+.mode-tabs {
+    display: flex;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0 20px;
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    font-weight: 500;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    border-bottom: 2px solid transparent;
+}
+
+.tab-btn:hover {
+    color: #334155;
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.tab-btn.active {
+    color: #667eea;
+    border-bottom-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+}
+
+/* Mode Content */
+.mode-content {
+    display: none;
+}
+
+.mode-content.active {
+    display: block;
+}
+
 /* Quick Actions */
 .quick-actions {
     padding: 20px;
@@ -119,6 +164,46 @@ body {
 .action-btn.area {
     background: linear-gradient(135deg, #a8edea, #fed6e3);
     color: #333;
+}
+
+.action-btn.camera {
+    background: linear-gradient(135deg, #ffeaa7, #fab1a0);
+    color: #333;
+}
+
+.action-btn.test {
+    background: linear-gradient(135deg, #00d2d3, #54a0ff);
+    color: white;
+}
+
+.action-btn.fullpage {
+    background: linear-gradient(135deg, #74b9ff, #0984e3);
+    color: white;
+}
+
+.action-btn.delayed {
+    background: linear-gradient(135deg, #fd79a8, #e84393);
+    color: white;
+}
+
+.action-btn.editor {
+    background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+    color: white;
+}
+
+.action-btn.clipboard {
+    background: linear-gradient(135deg, #00b894, #00cec9);
+    color: white;
+}
+
+.action-btn.annotations {
+    background: linear-gradient(135deg, #fd79a8, #fdcb6e);
+    color: white;
+}
+
+.action-btn.window {
+    background: linear-gradient(135deg, #6c5ce7, #74b9ff);
+    color: white;
 }
 
 .btn-icon {
@@ -294,6 +379,469 @@ body {
     font-size: 14px;
     cursor: pointer;
     color: #333;
+}
+
+/* File Upload Area */
+.file-upload-area {
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 24px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    background: #f8fafc;
+    margin: 12px 0;
+}
+
+.file-upload-area:hover {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.file-upload-area.dragover {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+    transform: scale(1.02);
+}
+
+.upload-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: #64748b;
+}
+
+.upload-content svg {
+    opacity: 0.6;
+}
+
+.upload-content p {
+    margin: 0;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+/* Editor Actions */
+.editor-actions {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Enhanced Settings */
+.settings-section {
+    display: none;
+}
+
+.settings-section.active {
+    display: block;
+}
+
+.setting-range {
+    width: 100%;
+    margin: 8px 0;
+}
+
+.range-value {
+    font-size: 12px;
+    color: #667eea;
+    font-weight: 600;
+}
+
+.setting-color {
+    width: 40px;
+    height: 32px;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.setting-color:hover {
+    border-color: #667eea;
+}
+
+.setting-input {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    background: white;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.setting-input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+/* Sharing Section */
+.sharing-section {
+    margin-top: 20px;
+    padding: 16px;
+    background: #f8fafc;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.sharing-section h4 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.sharing-buttons {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.share-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: white;
+}
+
+.share-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.share-btn.slack {
+    background: #4A154B;
+}
+
+.share-btn.jira {
+    background: #0052CC;
+}
+
+.share-btn.trello {
+    background: #0079BF;
+}
+
+.share-btn.github {
+    background: #24292e;
+}
+
+.share-btn.asana {
+    background: #F06A6A;
+}
+
+/* Share Dialog */
+.share-dialog-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.share-dialog {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    max-width: 400px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+}
+
+.share-dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.share-dialog-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.share-dialog-header .close-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    transition: background 0.2s ease;
+}
+
+.share-dialog-header .close-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+.share-dialog-content {
+    padding: 20px;
+}
+
+.field-group {
+    margin-bottom: 16px;
+}
+
+.field-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #374151;
+}
+
+.field-group input,
+.field-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+.field-group input:focus,
+.field-group textarea:focus {
+    outline: none;
+    border-color: #667eea;
+}
+
+.field-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.share-dialog-actions {
+    display: flex;
+    gap: 12px;
+    padding: 20px;
+    background: #f9fafb;
+    justify-content: flex-end;
+}
+
+.btn-cancel,
+.btn-share {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-cancel {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.btn-cancel:hover {
+    background: #d1d5db;
+}
+
+.btn-share {
+    background: #667eea;
+    color: white;
+}
+
+.btn-share:hover {
+    background: #5a67d8;
+}
+
+/* Stamp Library */
+.stamp-library {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow: hidden;
+    z-index: 10000;
+}
+
+.stamp-library-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.stamp-library-header h3 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.stamp-categories {
+    display: flex;
+    background: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    overflow-x: auto;
+}
+
+.category-btn {
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    font-weight: 500;
+    font-size: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+    border-bottom: 2px solid transparent;
+}
+
+.category-btn:hover {
+    color: #334155;
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.category-btn.active {
+    color: #667eea;
+    border-bottom-color: #667eea;
+    background: rgba(102, 126, 234, 0.1);
+}
+
+.stamp-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 12px;
+    padding: 20px;
+    max-height: 300px;
+    overflow-y: auto;
+}
+
+.stamp-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    position: relative;
+}
+
+.stamp-item:hover {
+    border-color: #667eea;
+    background: rgba(102, 126, 234, 0.05);
+}
+
+.stamp-icon {
+    font-size: 24px;
+    margin-bottom: 4px;
+}
+
+.stamp-item img {
+    width: 24px;
+    height: 24px;
+    object-fit: contain;
+    margin-bottom: 4px;
+}
+
+.stamp-name {
+    font-size: 10px;
+    text-align: center;
+    color: #64748b;
+    font-weight: 500;
+}
+
+.delete-stamp {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: #ef4444;
+    color: white;
+    border: none;
+    font-size: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.stamp-actions {
+    padding: 16px 20px;
+    background: #f9fafb;
+    border-top: 1px solid #e5e7eb;
+}
+
+.stamp-actions button {
+    width: 100%;
+    padding: 10px;
+    background: #667eea;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.stamp-actions button:hover {
+    background: #5a67d8;
+}
+
+/* Responsive adjustments */
+@media (max-width: 450px) {
+    .container {
+        width: 100vw;
+        border-radius: 0;
+        min-height: 100vh;
+    }
+
+    .mode-tabs {
+        padding: 0 12px;
+    }
+
+    .tab-btn {
+        font-size: 11px;
+        padding: 10px 8px;
+    }
+
+    .quick-actions {
+        padding: 16px;
+    }
+
+    .action-btn {
+        padding: 14px;
+    }
 }
 
 /* Footer */

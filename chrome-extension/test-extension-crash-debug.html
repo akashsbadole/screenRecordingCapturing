@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extension Crash Debug</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 900px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .debug-section {
+            margin: 30px 0;
+            padding: 25px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 15px;
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .debug-title {
+            font-size: 1.4em;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #fff;
+            text-align: center;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.3);
+            padding-bottom: 10px;
+        }
+        
+        .crash-info {
+            background: rgba(244, 67, 54, 0.2);
+            border: 2px solid #f44336;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .fix-info {
+            background: rgba(76, 175, 80, 0.2);
+            border: 2px solid #4CAF50;
+            padding: 20px;
+            border-radius: 15px;
+            margin: 20px 0;
+        }
+        
+        .test-button {
+            background: rgba(255, 255, 255, 0.2);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            margin: 10px;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .test-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        
+        .console-output {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            max-height: 200px;
+            overflow-y: auto;
+            margin: 15px 0;
+        }
+        
+        .status-indicator {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.9em;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+        
+        .status-working {
+            background: rgba(76, 175, 80, 0.8);
+            color: white;
+        }
+        
+        .status-crashed {
+            background: rgba(244, 67, 54, 0.8);
+            color: white;
+        }
+        
+        .status-unknown {
+            background: rgba(255, 193, 7, 0.8);
+            color: black;
+        }
+        
+        .steps {
+            counter-reset: step-counter;
+        }
+        
+        .steps li {
+            counter-increment: step-counter;
+            margin: 10px 0;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 0;
+            top: 0;
+            background: #4CAF50;
+            color: white;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Extension Crash Debug</h1>
+        
+        <div class="debug-section">
+            <div class="debug-title">
+                🚨 Extension Status Check
+                <span id="extensionStatus" class="status-indicator status-unknown">CHECKING...</span>
+            </div>
+            
+            <div class="crash-info">
+                <h4>❌ Extension Crash Symptoms:</h4>
+                <ul>
+                    <li>Chrome shows "Extension has crashed" notification</li>
+                    <li>Extension icon becomes grayed out</li>
+                    <li>Popup doesn't open when clicking extension icon</li>
+                    <li>Background script stops responding</li>
+                    <li>Console shows critical errors</li>
+                </ul>
+            </div>
+            
+            <div class="fix-info">
+                <h4>✅ Crash Prevention Measures Added:</h4>
+                <ul>
+                    <li><strong>Comprehensive Error Handling:</strong> Try-catch blocks throughout</li>
+                    <li><strong>Safe Initialization:</strong> Protected constructor and setup</li>
+                    <li><strong>Fallback Mode:</strong> Minimal functionality if main script fails</li>
+                    <li><strong>Debug Logging:</strong> Detailed console output for troubleshooting</li>
+                    <li><strong>Graceful Degradation:</strong> Continue working even if some features fail</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="debug-section">
+            <div class="debug-title">🔍 Debug Steps</div>
+            
+            <ol class="steps">
+                <li><strong>Open DevTools:</strong> Press F12 → Console tab</li>
+                <li><strong>Reload Extension:</strong> Go to chrome://extensions/ and reload</li>
+                <li><strong>Check Console:</strong> Look for initialization messages</li>
+                <li><strong>Test Extension:</strong> Try clicking the extension icon</li>
+                <li><strong>Monitor Status:</strong> Watch for crash notifications</li>
+            </ol>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <button class="test-button" onclick="checkExtensionStatus()">
+                    🔍 Check Extension Status
+                </button>
+                <button class="test-button" onclick="openDevTools()">
+                    🛠️ Open DevTools
+                </button>
+                <button class="test-button" onclick="reloadExtension()">
+                    🔄 Reload Extension
+                </button>
+            </div>
+        </div>
+        
+        <div class="debug-section">
+            <div class="debug-title">📊 Expected Console Output</div>
+            
+            <div class="fix-info">
+                <h4>✅ Successful Initialization:</h4>
+                <div class="console-output">
+Starting ScreenRecorderBackground initialization...
+ScreenRecorderBackground: Starting initialization...
+ScreenRecorderBackground: Setting up event listeners...
+ScreenRecorderBackground: Setting up keyboard shortcuts...
+ScreenRecorderBackground: All setup completed
+ScreenRecorderBackground: Event listeners setup completed
+ScreenRecorderBackground: Initialization completed successfully
+ScreenRecorderBackground initialized successfully
+                </div>
+            </div>
+            
+            <div class="crash-info">
+                <h4>❌ If Crash Occurs:</h4>
+                <div class="console-output">
+CRITICAL: Failed to initialize ScreenRecorderBackground: [error details]
+Attempting to create minimal fallback background script...
+Fallback background script created
+                </div>
+                <p>The fallback mode will keep the extension functional even if the main script fails.</p>
+            </div>
+        </div>
+        
+        <div class="debug-section">
+            <div class="debug-title">🎯 Troubleshooting Guide</div>
+            
+            <div style="background: rgba(255, 255, 255, 0.1); padding: 20px; border-radius: 10px;">
+                <h4>If Extension Still Crashes:</h4>
+                <ol>
+                    <li><strong>Check Chrome Version:</strong> Ensure you're using a recent version</li>
+                    <li><strong>Clear Extension Data:</strong> Remove and reinstall the extension</li>
+                    <li><strong>Check Permissions:</strong> Ensure all required permissions are granted</li>
+                    <li><strong>Disable Other Extensions:</strong> Test with other extensions disabled</li>
+                    <li><strong>Check Console Errors:</strong> Look for specific error messages</li>
+                </ol>
+                
+                <h4>Common Crash Causes:</h4>
+                <ul>
+                    <li><strong>Permission Issues:</strong> Missing required permissions</li>
+                    <li><strong>API Compatibility:</strong> Using unsupported Chrome APIs</li>
+                    <li><strong>Memory Issues:</strong> Extension using too much memory</li>
+                    <li><strong>Syntax Errors:</strong> JavaScript errors in the code</li>
+                    <li><strong>Manifest Issues:</strong> Problems with manifest.json</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div id="statusReport" class="debug-section" style="display: none;">
+            <div class="debug-title">📋 Extension Status Report</div>
+            <div id="statusDetails"></div>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0; padding: 20px; background: rgba(76, 175, 80, 0.2); border-radius: 15px;">
+            <h3>🔧 Enhanced Error Handling Active</h3>
+            <p>The extension now has comprehensive error handling to prevent crashes and provide detailed debugging information.</p>
+            <p><strong>Check the console for detailed initialization logs!</strong></p>
+        </div>
+    </div>
+
+    <script>
+        let extensionHealthy = false;
+        
+        function checkExtensionStatus() {
+            const statusElement = document.getElementById('extensionStatus');
+            const reportElement = document.getElementById('statusReport');
+            const detailsElement = document.getElementById('statusDetails');
+            
+            try {
+                // Try to access extension APIs
+                if (typeof chrome !== 'undefined' && chrome.runtime && chrome.runtime.id) {
+                    statusElement.textContent = 'WORKING';
+                    statusElement.className = 'status-indicator status-working';
+                    extensionHealthy = true;
+                    
+                    detailsElement.innerHTML = `
+                        <div class="fix-info">
+                            <h4>✅ Extension Status: HEALTHY</h4>
+                            <p>Extension ID: ${chrome.runtime.id}</p>
+                            <p>Extension APIs accessible</p>
+                            <p>No crash detected</p>
+                        </div>
+                    `;
+                } else {
+                    statusElement.textContent = 'CRASHED';
+                    statusElement.className = 'status-indicator status-crashed';
+                    extensionHealthy = false;
+                    
+                    detailsElement.innerHTML = `
+                        <div class="crash-info">
+                            <h4>❌ Extension Status: CRASHED</h4>
+                            <p>Chrome runtime not accessible</p>
+                            <p>Extension may have crashed or failed to load</p>
+                            <p>Try reloading the extension</p>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                statusElement.textContent = 'ERROR';
+                statusElement.className = 'status-indicator status-crashed';
+                extensionHealthy = false;
+                
+                detailsElement.innerHTML = `
+                    <div class="crash-info">
+                        <h4>❌ Extension Status: ERROR</h4>
+                        <p>Error checking extension: ${error.message}</p>
+                        <p>Extension likely crashed or failed to initialize</p>
+                    </div>
+                `;
+            }
+            
+            reportElement.style.display = 'block';
+        }
+        
+        function openDevTools() {
+            alert('Press F12 to open DevTools, then go to the Console tab to see extension initialization logs.');
+        }
+        
+        function reloadExtension() {
+            window.open('chrome://extensions/', '_blank');
+        }
+        
+        // Auto-check extension status on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(checkExtensionStatus, 1000);
+            
+            // Check periodically
+            setInterval(checkExtensionStatus, 10000);
+        });
+        
+        // Monitor for extension crashes
+        let lastHealthyTime = Date.now();
+        
+        setInterval(() => {
+            const wasHealthy = extensionHealthy;
+            checkExtensionStatus();
+            
+            if (wasHealthy && !extensionHealthy) {
+                console.error('🚨 Extension crash detected!');
+                alert('Extension crash detected! Check the console for details.');
+            } else if (!wasHealthy && extensionHealthy) {
+                console.log('✅ Extension recovered!');
+            }
+        }, 5000);
+        
+        console.log('🔧 Extension Crash Debug Page Loaded');
+        console.log('🔍 Monitoring extension health...');
+    </script>
+</body>
+</html>
