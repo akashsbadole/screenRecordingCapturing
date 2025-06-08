@@ -75,22 +75,22 @@ export function Features() {
   return (
     <section
       id="features"
-      className="py-24 relative overflow-hidden bg-gradient-to-br from-white via-slate-50 to-blue-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900"
+      className="py-24 relative overflow-hidden bg-gradient-to-br from-navy-900 via-purple-900 to-navy-800"
     >
-      <div className="absolute inset-0 bg-gradient-to-tl from-blue-50/50 via-transparent to-purple-50/50 -z-10" />
+      <div className="absolute inset-0 bg-gradient-to-tl from-purple-900/30 via-transparent to-navy-900/30 -z-10" />
 
       <div
-        className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+        className="container max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative"
         ref={containerRef}
       >
         <motion.div
           style={{ opacity, y }}
           className="text-center max-w-4xl mx-auto mb-16"
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-purple-200 bg-clip-text text-transparent">
             Powerful Features
           </h2>
-          <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 leading-relaxed">
+          <p className="text-xl md:text-2xl text-white/80 leading-relaxed">
             Discover the comprehensive set of tools designed to make screen
             capture and recording effortless and efficient.
           </p>
@@ -104,15 +104,15 @@ export function Features() {
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true, margin: "-100px" }}
-              className="group bg-white/70 backdrop-blur-sm hover:bg-white/90 border-0 rounded-2xl p-8 transition-all duration-300 hover:shadow-2xl hover:scale-105"
+              className="group bg-gradient-to-br from-purple-900/20 to-navy-900/20 backdrop-blur-sm hover:bg-purple-900/30 border-2 border-purple-600/30 hover:border-purple-400 rounded-2xl p-8 transition-all duration-300 hover:shadow-2xl hover:scale-105"
             >
-              <div className="mb-6 p-4 rounded-2xl bg-gradient-to-br from-blue-500 to-purple-600 text-white w-fit shadow-lg group-hover:scale-110 transition-transform">
+              <div className="mb-6 p-4 rounded-2xl bg-gradient-to-br from-purple-600 to-purple-800 text-white w-fit shadow-lg group-hover:scale-110 transition-transform">
                 <feature.icon className="h-6 w-6" />
               </div>
-              <h3 className="text-xl font-bold mb-3 text-slate-900">
+              <h3 className="text-xl font-bold mb-3 text-white">
                 {feature.title}
               </h3>
-              <p className="text-slate-600 leading-relaxed">
+              <p className="text-white/70 leading-relaxed">
                 {feature.description}
               </p>
             </motion.div>

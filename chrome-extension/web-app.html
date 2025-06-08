@@ -314,8 +314,8 @@
                 <div class="feature-icon">📸</div>
                 <div class="feature-title">Screen Capture</div>
                 <div class="feature-description">
-                    Take screenshots of full screen, custom areas, or entire web pages. 
-                    Advanced features include delayed capture and annotation tools.
+                    Take screenshots of full screen, custom areas, or entire web pages.
+                    Advanced features include delayed capture and area selection.
                 </div>
                 <div class="feature-actions">
                     <button class="feature-btn primary" onclick="takeScreenshot()">Take Screenshot</button>
@@ -323,37 +323,15 @@
                 </div>
             </div>
 
-            <div class="feature-card">
-                <div class="feature-icon">🎨</div>
-                <div class="feature-title">Annotation Tools</div>
-                <div class="feature-description">
-                    Add text, arrows, shapes, and highlights to your captures. 
-                    Professional annotation tools for creating clear, informative screenshots.
-                </div>
-                <div class="feature-actions">
-                    <button class="feature-btn primary" onclick="openAnnotations()">Open Editor</button>
-                    <button class="feature-btn" onclick="viewTemplates()">Templates</button>
-                </div>
-            </div>
 
-            <div class="feature-card">
-                <div class="feature-icon">📱</div>
-                <div class="feature-title">Camera Recording</div>
-                <div class="feature-description">
-                    Record from your webcam with professional quality. 
-                    Perfect for tutorials, presentations, and video calls.
-                </div>
-                <div class="feature-actions">
-                    <button class="feature-btn primary" onclick="recordCamera()">Record Camera</button>
-                    <button class="feature-btn" onclick="testCamera()">Test Camera</button>
-                </div>
-            </div>
+
+
 
             <div class="feature-card">
                 <div class="feature-icon">🔄</div>
                 <div class="feature-title">Advanced Features</div>
                 <div class="feature-description">
-                    Watermarks, cursor highlighting, live annotations, voiceovers, 
+                    Watermarks, cursor highlighting, voiceovers,
                     and automatic saving. Professional tools for power users.
                 </div>
                 <div class="feature-actions">
@@ -466,19 +444,9 @@
             chrome.action.openPopup();
         }
 
-        function recordCamera() {
-            showNotification('Opening extension for camera recording...', 'info');
-            chrome.action.openPopup();
-        }
 
-        function testCamera() {
-            showNotification('Opening extension to test camera...', 'info');
-            chrome.action.openPopup();
-        }
 
-        function openAnnotations() {
-            showNotification('Annotation editor coming soon!', 'info');
-        }
+
 
         function openSettings() {
             showNotification('Opening extension settings...', 'info');
@@ -494,9 +462,7 @@
             showNotification('Cloud integrations coming soon!', 'info');
         }
 
-        function viewTemplates() {
-            showNotification('Annotation templates coming soon!', 'info');
-        }
+
 
         function viewTutorials() {
             showNotification('Video tutorials coming soon!', 'info');

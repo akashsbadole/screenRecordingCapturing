@@ -4,6 +4,16 @@
 
 A comprehensive Chrome extension that rivals premium desktop applications like Zoom, Google Meet, and professional screen recording tools. Built with modern web technologies and packed with advanced features for content creators, developers, educators, and professionals.
 
+## 📸 **Extension Screenshot**
+
+![🎬 Screen Recorder & Capture Pro - Chrome Extension](screenshot.png)
+
+## **same extension but built using plasmo framework**
+
+<a href="https://github.com/akashsbadole/screencaptureChromeExtension">using plasmo framework https://github.com/akashsbadole/screencaptureChromeExtension</a>
+
+![screencaptureChromeExtension](https://raw.githubusercontent.com/akashsbadole/screencaptureChromeExtension/main/screenshot.png?token=GHSAT0AAAAAADAFXFG4OO3QSYLHBUORJYPI2CFZRXA)
+
 ## ✨ **COMPLETE FEATURE SET** ✨
 
 ### 🎥 **Advanced Screen Recording**

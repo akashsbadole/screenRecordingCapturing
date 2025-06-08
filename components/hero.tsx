@@ -74,11 +74,11 @@ export function Hero() {
   };
 
   return (
-    <section className="relative py-20 md:py-32 overflow-hidden">
+    <section className="relative py-20 md:py-32 overflow-hidden bg-gradient-to-br from-navy-900 via-purple-900 to-navy-800">
       {/* Enhanced Background */}
-      <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 -z-10" />
+      <div className="absolute inset-0 bg-gradient-to-br from-navy-900/50 via-purple-900/30 to-navy-800/50 -z-10" />
       <div className="absolute inset-0 bg-grid-pattern opacity-5 -z-10" />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full blur-3xl opacity-10 -z-10" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-96 h-96 bg-gradient-to-r from-purple-600 to-purple-800 rounded-full blur-3xl opacity-20 -z-10" />
 
       <div className="container relative">
         {/* Header Section */}
@@ -115,20 +115,18 @@ export function Hero() {
 
             {/* Main Heading */}
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight">
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-purple-400 to-purple-200 bg-clip-text text-transparent">
                 Screen Recording
               </span>
               <br />
-              <span className="text-gray-900 dark:text-white">
-                & Capture Tool
-              </span>
+              <span className="text-white">& Capture Tool</span>
             </h1>
 
             {/* Subheading */}
-            <p className="text-xl md:text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-white/80 max-w-3xl mx-auto leading-relaxed">
               Professional screen recording, screenshot capture, and video
               meetings.
-              <span className="font-semibold text-primary">
+              <span className="font-semibold text-purple-400">
                 {" "}
                 Chrome extension included.
               </span>
@@ -144,7 +142,7 @@ export function Hero() {
           >
             <Button
               size="lg"
-              className="gap-2 group px-8 py-6 text-lg"
+              className="gap-2 group px-8 py-6 text-lg bg-purple-600 text-white border-2 border-purple-600 hover:bg-navy-900 hover:border-purple-600 hover:text-white transition-all duration-300"
               onClick={() => router.push("#tools")}
             >
               <Play className="h-5 w-5" />
@@ -155,7 +153,7 @@ export function Hero() {
             <Button
               size="lg"
               variant="outline"
-              className="gap-2 px-8 py-6 text-lg"
+              className="gap-2 px-8 py-6 text-lg bg-transparent text-white border-2 border-purple-600 hover:bg-purple-600 hover:border-purple-600 hover:text-white transition-all duration-300"
               onClick={downloadChromeExtension}
             >
               <Chrome className="h-5 w-5" />
@@ -166,7 +164,7 @@ export function Hero() {
             <Button
               size="lg"
               variant="secondary"
-              className="gap-2 px-8 py-6 text-lg"
+              className="gap-2 px-8 py-6 text-lg bg-navy-900 text-white border-2 border-navy-900 hover:bg-purple-600 hover:border-navy-900 hover:text-white transition-all duration-300"
               onClick={startVideoMeeting}
             >
               <Users className="h-5 w-5" />
@@ -182,54 +180,60 @@ export function Hero() {
             className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16"
           >
             {/* Screen Recording Card */}
-            <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-blue-200">
+            <Card className="group hover:shadow-lg transition-all duration-300 border-2 border-purple-600/30 hover:border-purple-400 bg-gradient-to-br from-purple-900/20 to-navy-900/20 backdrop-blur-sm">
               <CardContent className="p-6 text-center">
-                <div className="bg-blue-100 dark:bg-blue-900 p-3 rounded-full w-fit mx-auto mb-4 group-hover:scale-110 transition-transform">
-                  <Monitor className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                <div className="bg-purple-600/20 p-3 rounded-full w-fit mx-auto mb-4 group-hover:scale-110 transition-transform">
+                  <Monitor className="h-8 w-8 text-purple-400" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">Screen Recording</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="font-semibold text-lg mb-2 text-white">
+                  Screen Recording
+                </h3>
+                <p className="text-sm text-white/70">
                   High-quality video recording with audio support
                 </p>
               </CardContent>
             </Card>
 
             {/* Screenshot Card */}
-            <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-green-200">
+            <Card className="group hover:shadow-lg transition-all duration-300 border-2 border-purple-600/30 hover:border-purple-400 bg-gradient-to-br from-purple-900/20 to-navy-900/20 backdrop-blur-sm">
               <CardContent className="p-6 text-center">
-                <div className="bg-green-100 dark:bg-green-900 p-3 rounded-full w-fit mx-auto mb-4 group-hover:scale-110 transition-transform">
-                  <Camera className="h-8 w-8 text-green-600 dark:text-green-400" />
+                <div className="bg-purple-600/20 p-3 rounded-full w-fit mx-auto mb-4 group-hover:scale-110 transition-transform">
+                  <Camera className="h-8 w-8 text-purple-400" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">
+                <h3 className="font-semibold text-lg mb-2 text-white">
                   Screenshot Capture
                 </h3>
-                <p className="text-sm text-muted-foreground">
+                <p className="text-sm text-white/70">
                   Capture full screen or selected areas instantly
                 </p>
               </CardContent>
             </Card>
 
             {/* Video Meetings Card */}
-            <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-purple-200">
+            <Card className="group hover:shadow-lg transition-all duration-300 border-2 border-purple-600/30 hover:border-purple-400 bg-gradient-to-br from-purple-900/20 to-navy-900/20 backdrop-blur-sm">
               <CardContent className="p-6 text-center">
-                <div className="bg-purple-100 dark:bg-purple-900 p-3 rounded-full w-fit mx-auto mb-4 group-hover:scale-110 transition-transform">
-                  <Video className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+                <div className="bg-purple-600/20 p-3 rounded-full w-fit mx-auto mb-4 group-hover:scale-110 transition-transform">
+                  <Video className="h-8 w-8 text-purple-400" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">Video Meetings</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="font-semibold text-lg mb-2 text-white">
+                  Video Meetings
+                </h3>
+                <p className="text-sm text-white/70">
                   Zoom-like video calls with screen sharing
                 </p>
               </CardContent>
             </Card>
 
             {/* Chrome Extension Card */}
-            <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-orange-200">
+            <Card className="group hover:shadow-lg transition-all duration-300 border-2 border-purple-600/30 hover:border-purple-400 bg-gradient-to-br from-purple-900/20 to-navy-900/20 backdrop-blur-sm">
               <CardContent className="p-6 text-center">
-                <div className="bg-orange-100 dark:bg-orange-900 p-3 rounded-full w-fit mx-auto mb-4 group-hover:scale-110 transition-transform">
-                  <Chrome className="h-8 w-8 text-orange-600 dark:text-orange-400" />
+                <div className="bg-purple-600/20 p-3 rounded-full w-fit mx-auto mb-4 group-hover:scale-110 transition-transform">
+                  <Chrome className="h-8 w-8 text-purple-400" />
                 </div>
-                <h3 className="font-semibold text-lg mb-2">Chrome Extension</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="font-semibold text-lg mb-2 text-white">
+                  Chrome Extension
+                </h3>
+                <p className="text-sm text-white/70">
                   Browser extension for quick access anywhere
                 </p>
               </CardContent>
@@ -241,18 +245,18 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={isVisible ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="flex flex-wrap items-center justify-center gap-8 text-muted-foreground"
+            className="flex flex-wrap items-center justify-center gap-8 text-white/70"
           >
             <div className="flex items-center gap-2">
-              <Shield className="h-5 w-5" />
+              <Shield className="h-5 w-5 text-purple-400" />
               <span className="text-sm font-medium">Privacy Focused</span>
             </div>
             <div className="flex items-center gap-2">
-              <Globe className="h-5 w-5" />
+              <Globe className="h-5 w-5 text-purple-400" />
               <span className="text-sm font-medium">Works Offline</span>
             </div>
             <div className="flex items-center gap-2">
-              <Star className="h-5 w-5 fill-current text-yellow-500" />
+              <Star className="h-5 w-5 fill-current text-purple-400" />
               <span className="text-sm font-medium">Professional Quality</span>
             </div>
           </motion.div>
@@ -267,9 +271,9 @@ export function Hero() {
         className="container mt-20"
       >
         <div className="relative mx-auto max-w-6xl">
-          <Card className="overflow-hidden border-2 shadow-2xl">
+          <Card className="overflow-hidden border-2 border-purple-600/30 shadow-2xl bg-gradient-to-br from-purple-900/20 to-navy-900/20 backdrop-blur-sm">
             <CardContent className="p-0">
-              <div className="aspect-video bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-800 dark:to-gray-900 flex items-center justify-center relative">
+              <div className="aspect-video bg-gradient-to-br from-navy-900/50 to-purple-900/50 flex items-center justify-center relative">
                 {/* Mock Browser Window */}
                 <div className="absolute top-4 left-4 flex gap-2">
                   <div className="w-3 h-3 bg-red-400 rounded-full"></div>
@@ -279,18 +283,20 @@ export function Hero() {
 
                 {/* Demo Content */}
                 <div className="text-center space-y-4">
-                  <div className="bg-primary/10 text-primary p-4 rounded-full inline-flex">
+                  <div className="bg-purple-600/20 text-purple-400 p-4 rounded-full inline-flex">
                     <Monitor className="h-12 w-12" />
                   </div>
                   <div>
-                    <h3 className="text-2xl font-bold mb-2">Live Demo</h3>
-                    <p className="text-muted-foreground">
+                    <h3 className="text-2xl font-bold mb-2 text-white">
+                      Live Demo
+                    </h3>
+                    <p className="text-white/70">
                       Try the tools below to see them in action
                     </p>
                   </div>
                   <Button
                     onClick={() => router.push("#tools")}
-                    className="gap-2"
+                    className="gap-2 bg-purple-600 text-white border-2 border-purple-600 hover:bg-navy-900 hover:border-purple-600 hover:text-white transition-all duration-300"
                   >
                     <Play className="h-4 w-4" />
                     Start Demo

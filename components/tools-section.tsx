@@ -14,6 +14,7 @@ import { EnhancedScreenshotTool } from "@/components/enhanced-screenshot-tool";
 import { RecordingTool } from "@/components/recording-tool";
 import { PrintScreenTool } from "@/components/print-screen-tool";
 import { VideoCallTool } from "@/components/video-call-tool";
+import { PerformanceTestDashboard } from "@/components/performance-test-dashboard";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { useState, useEffect } from "react";
 
@@ -92,14 +93,14 @@ export function ToolsSection() {
   return (
     <section
       id="tools"
-      className="py-24 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-900 dark:to-slate-800"
+      className="py-24 bg-gradient-to-br from-navy-800 via-purple-900 to-navy-900"
     >
       <div className="container max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-16">
-          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-slate-900 to-slate-700 dark:from-white dark:to-slate-300 bg-clip-text text-transparent">
+          <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-purple-400 to-purple-200 bg-clip-text text-transparent">
             Professional Recording & Capture Tools
           </h2>
-          <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
+          <p className="text-xl text-white/80 max-w-3xl mx-auto leading-relaxed">
             High-quality screen recording, instant screenshots, and optional
             video meetings. Try our tools directly in your browser or download
             the Chrome extension.
@@ -107,14 +108,14 @@ export function ToolsSection() {
         </div>
 
         <Tabs defaultValue="recording" className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-12 bg-white/50 backdrop-blur-sm border border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 p-2 rounded-2xl shadow-lg">
+          <TabsList className="grid w-full grid-cols-6 mb-12 bg-purple-900/30 backdrop-blur-sm border border-purple-600/30 p-2 rounded-2xl shadow-lg">
             <TabsTrigger
               value="recording"
               className="flex items-center gap-2"
               disabled={!browserSupport.recording}
             >
               <Video className="h-4 w-4" />
-              <span>Advanced Recording</span>
+              <span>Recording</span>
             </TabsTrigger>
             <TabsTrigger
               value="screenshot"
@@ -139,6 +140,14 @@ export function ToolsSection() {
             >
               <Users className="h-4 w-4" />
               <span>Video Meeting</span>
+            </TabsTrigger>
+
+            <TabsTrigger
+              value="performance"
+              className="flex items-center gap-2"
+            >
+              <AlertTriangle className="h-4 w-4" />
+              <span>Performance</span>
             </TabsTrigger>
 
             <TabsTrigger
@@ -168,6 +177,10 @@ export function ToolsSection() {
 
           <TabsContent value="videocall">
             <VideoCallTool />
+          </TabsContent>
+
+          <TabsContent value="performance">
+            <PerformanceTestDashboard />
           </TabsContent>
 
           <TabsContent value="selection">

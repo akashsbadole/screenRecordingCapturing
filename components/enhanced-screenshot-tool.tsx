@@ -14,7 +14,8 @@ import {
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Slider } from "@/components/ui/slider";
-// import { AnnotationToolbar } from '@/components/annotation-toolbar';
+import { AnnotationToolbar } from "@/components/annotation-toolbar";
+import { EnhancedAnnotationCanvas } from "@/components/enhanced-annotation-canvas";
 import {
   Camera,
   Download,
@@ -22,7 +23,7 @@ import {
   Monitor,
   Square,
   MousePointer,
-  Window as WindowIcon,
+  RectangleHorizontal as WindowIcon,
   Crop,
   Edit,
   Timer,
@@ -32,8 +33,12 @@ import {
   Zap,
   Target,
   Maximize,
+  Activity,
+  Sparkles,
+  Wand2,
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { usePerformanceMonitor } from "@/hooks/use-performance-monitor";
 
 export function EnhancedScreenshotTool() {
   const [screenshot, setScreenshot] = useState<string | null>(null);
@@ -50,9 +55,34 @@ export function EnhancedScreenshotTool() {
   const [includeWatermark, setIncludeWatermark] = useState(false);
   const [quality, setQuality] = useState(100);
   const [showAdvanced, setShowAdvanced] = useState(false);
+
+  // Enhanced features
+  const [smartDetection, setSmartDetection] = useState(false);
+  const [batchCapture, setBatchCapture] = useState(false);
+  const [autoEnhance, setAutoEnhance] = useState(false);
+  const [showPerformanceMonitor, setShowPerformanceMonitor] = useState(false);
+  const [screenshotDimensions, setScreenshotDimensions] = useState({
+    width: 0,
+    height: 0,
+  });
+
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
-  const annotationCanvasRef = useRef<HTMLCanvasElement | null>(null);
+  const imageRef = useRef<HTMLImageElement | null>(null);
   const { toast } = useToast();
+
+  // Performance monitoring
+  const {
+    metrics,
+    isMonitoring,
+    startMonitoring,
+    stopMonitoring,
+    performanceIssues,
+    getOptimizationSuggestions,
+  } = usePerformanceMonitor({
+    fpsTarget: 60,
+    memoryThreshold: 75,
+    autoOptimize: true,
+  });
 
   const captureModes = [
     {
@@ -489,6 +519,53 @@ export function EnhancedScreenshotTool() {
                       />
                     </div>
                   </div>
+
+                  {/* Enhanced Features */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-3 border-t">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Sparkles className="h-4 w-4 text-purple-600" />
+                        <Label>Smart Detection</Label>
+                      </div>
+                      <Switch
+                        checked={smartDetection}
+                        onCheckedChange={setSmartDetection}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Layers className="h-4 w-4 text-blue-600" />
+                        <Label>Batch Capture</Label>
+                      </div>
+                      <Switch
+                        checked={batchCapture}
+                        onCheckedChange={setBatchCapture}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Wand2 className="h-4 w-4 text-green-600" />
+                        <Label>Auto Enhance</Label>
+                      </div>
+                      <Switch
+                        checked={autoEnhance}
+                        onCheckedChange={setAutoEnhance}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <Activity className="h-4 w-4 text-orange-600" />
+                        <Label>Performance Monitor</Label>
+                      </div>
+                      <Switch
+                        checked={showPerformanceMonitor}
+                        onCheckedChange={setShowPerformanceMonitor}
+                      />
+                    </div>
+                  </div>
                 </div>
               )}
             </CardContent>
@@ -520,32 +597,122 @@ export function EnhancedScreenshotTool() {
         <TabsContent value="edit" className="space-y-6">
           {screenshot ? (
             <div className="space-y-4">
-              {/* Annotation Toolbar - Coming Soon */}
-              <Card>
-                <CardContent className="p-4">
-                  <div className="text-center text-muted-foreground">
-                    <p>Advanced annotation tools coming soon!</p>
-                    <p className="text-sm">
-                      Pen, highlighter, shapes, text, and more...
-                    </p>
-                  </div>
-                </CardContent>
-              </Card>
+              {/* Performance Monitor */}
+              {showPerformanceMonitor && (
+                <Card>
+                  <CardContent className="p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <Activity className="h-4 w-4 text-blue-600" />
+                      <h4 className="font-medium text-sm">
+                        Performance Monitor
+                      </h4>
+                    </div>
+                    <div className="grid grid-cols-3 gap-4 text-sm">
+                      <div>
+                        <span>Render Time: </span>
+                        <span
+                          className={
+                            metrics.renderTime < 16
+                              ? "text-green-600"
+                              : "text-yellow-600"
+                          }
+                        >
+                          {metrics.renderTime.toFixed(1)}ms
+                        </span>
+                      </div>
+                      <div>
+                        <span>Memory: </span>
+                        <span
+                          className={
+                            metrics.memoryUsage < 75
+                              ? "text-green-600"
+                              : "text-red-600"
+                          }
+                        >
+                          {metrics.memoryUsage}%
+                        </span>
+                      </div>
+                      <div>
+                        <span>FPS: </span>
+                        <span
+                          className={
+                            metrics.fps >= 50
+                              ? "text-green-600"
+                              : "text-yellow-600"
+                          }
+                        >
+                          {metrics.fps}
+                        </span>
+                      </div>
+                    </div>
+                    {performanceIssues.length > 0 && (
+                      <div className="mt-2 text-xs text-amber-600">
+                        Issues: {performanceIssues.join(", ")}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              )}
 
-              {/* Screenshot Preview */}
+              {/* Enhanced Annotation Toolbar */}
+              <AnnotationToolbar
+                onToolChange={setAnnotationTool}
+                onColorChange={setAnnotationColor}
+                onSizeChange={setAnnotationSize}
+                onOpacityChange={setAnnotationOpacity}
+                activeTool={annotationTool}
+                activeColor={annotationColor}
+                activeSize={annotationSize}
+                activeOpacity={annotationOpacity}
+                onUndo={() => {}}
+                onRedo={() => {}}
+                onClear={() => {}}
+                onSave={() => {}}
+                onDownload={handleDownload}
+                canUndo={false}
+                canRedo={false}
+              />
+
+              {/* Screenshot with Annotation Canvas */}
               <Card>
                 <CardContent className="p-4">
-                  <div className="relative">
+                  <div className="relative inline-block">
                     <img
+                      ref={imageRef}
                       src={screenshot}
                       alt="Screenshot"
-                      className="w-full h-auto border rounded-lg"
+                      className="max-w-full h-auto border rounded-lg"
+                      onLoad={(e) => {
+                        const img = e.target as HTMLImageElement;
+                        setScreenshotDimensions({
+                          width: img.naturalWidth,
+                          height: img.naturalHeight,
+                        });
+                        if (!isMonitoring) startMonitoring();
+                      }}
                     />
-                    <canvas
-                      ref={annotationCanvasRef}
-                      className="absolute top-0 left-0 w-full h-full pointer-events-none"
-                    />
+                    {screenshotDimensions.width > 0 && (
+                      <EnhancedAnnotationCanvas
+                        width={screenshotDimensions.width}
+                        height={screenshotDimensions.height}
+                        tool={annotationTool}
+                        color={annotationColor}
+                        size={annotationSize}
+                        opacity={annotationOpacity}
+                        className="rounded-lg"
+                      />
+                    )}
                     <div className="absolute top-2 right-2 flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() =>
+                          setShowPerformanceMonitor(!showPerformanceMonitor)
+                        }
+                      >
+                        <Activity className="h-4 w-4 mr-1" />
+                        Monitor
+                      </Button>
                       <Button
                         variant="outline"
                         size="sm"

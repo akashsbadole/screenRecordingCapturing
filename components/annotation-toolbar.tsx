@@ -1,21 +1,21 @@
 "use client";
 
-import { useState } from 'react';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
-import { Label } from '@/components/ui/label';
-import { Slider } from '@/components/ui/slider';
-import { 
-  Pen, 
-  Square, 
-  Circle, 
-  ArrowRight, 
-  Type, 
-  Highlighter, 
-  Eraser, 
-  Undo, 
-  Redo, 
+import { useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { Label } from "@/components/ui/label";
+import { Slider } from "@/components/ui/slider";
+import {
+  Pen,
+  Square,
+  Circle,
+  ArrowRight,
+  Type,
+  Highlighter,
+  Eraser,
+  Undo,
+  Redo,
   Palette,
   Star,
   Heart,
@@ -31,11 +31,11 @@ import {
   Move,
   RotateCcw,
   Crop,
-  Blur,
+  Filter,
   Stamp,
   Image as ImageIcon,
-  Droplets
-} from 'lucide-react';
+  Droplets,
+} from "lucide-react";
 
 interface AnnotationToolbarProps {
   onToolChange: (tool: string) => void;
@@ -70,38 +70,53 @@ export function AnnotationToolbar({
   onSave,
   onDownload,
   canUndo,
-  canRedo
+  canRedo,
 }: AnnotationToolbarProps) {
   const [showColorPalette, setShowColorPalette] = useState(false);
   const [showStamps, setShowStamps] = useState(false);
 
   const tools = [
-    { id: 'select', icon: MousePointer, label: 'Select' },
-    { id: 'pen', icon: Pen, label: 'Pen' },
-    { id: 'highlighter', icon: Highlighter, label: 'Highlighter' },
-    { id: 'line', icon: Minus, label: 'Line' },
-    { id: 'arrow', icon: ArrowRight, label: 'Arrow' },
-    { id: 'rectangle', icon: Square, label: 'Rectangle' },
-    { id: 'circle', icon: Circle, label: 'Circle' },
-    { id: 'triangle', icon: Triangle, label: 'Triangle' },
-    { id: 'text', icon: Type, label: 'Text' },
-    { id: 'blur', icon: Blur, label: 'Blur' },
-    { id: 'eraser', icon: Eraser, label: 'Eraser' }
+    { id: "select", icon: MousePointer, label: "Select" },
+    { id: "pen", icon: Pen, label: "Pen" },
+    { id: "highlighter", icon: Highlighter, label: "Highlighter" },
+    { id: "line", icon: Minus, label: "Line" },
+    { id: "arrow", icon: ArrowRight, label: "Arrow" },
+    { id: "rectangle", icon: Square, label: "Rectangle" },
+    { id: "circle", icon: Circle, label: "Circle" },
+    { id: "triangle", icon: Triangle, label: "Triangle" },
+    { id: "text", icon: Type, label: "Text" },
+    { id: "blur", icon: Filter, label: "Blur" },
+    { id: "eraser", icon: Eraser, label: "Eraser" },
   ];
 
   const colors = [
-    '#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff',
-    '#000000', '#ffffff', '#808080', '#800000', '#008000', '#000080',
-    '#808000', '#800080', '#008080', '#c0c0c0', '#ffa500', '#ffc0cb'
+    "#ff0000",
+    "#00ff00",
+    "#0000ff",
+    "#ffff00",
+    "#ff00ff",
+    "#00ffff",
+    "#000000",
+    "#ffffff",
+    "#808080",
+    "#800000",
+    "#008000",
+    "#000080",
+    "#808000",
+    "#800080",
+    "#008080",
+    "#c0c0c0",
+    "#ffa500",
+    "#ffc0cb",
   ];
 
   const stamps = [
-    { id: 'star', icon: Star, label: 'Star' },
-    { id: 'heart', icon: Heart, label: 'Heart' },
-    { id: 'check', icon: Plus, label: 'Check' },
-    { id: 'cross', icon: Plus, label: 'Cross' },
-    { id: 'arrow-up', icon: ArrowRight, label: 'Arrow Up' },
-    { id: 'arrow-down', icon: ArrowRight, label: 'Arrow Down' }
+    { id: "star", icon: Star, label: "Star" },
+    { id: "heart", icon: Heart, label: "Heart" },
+    { id: "check", icon: Plus, label: "Check" },
+    { id: "cross", icon: Plus, label: "Cross" },
+    { id: "arrow-up", icon: ArrowRight, label: "Arrow Up" },
+    { id: "arrow-down", icon: ArrowRight, label: "Arrow Down" },
   ];
 
   return (
@@ -113,7 +128,7 @@ export function AnnotationToolbar({
             {tools.map((tool) => (
               <Button
                 key={tool.id}
-                variant={activeTool === tool.id ? 'default' : 'ghost'}
+                variant={activeTool === tool.id ? "default" : "ghost"}
                 size="sm"
                 onClick={() => onToolChange(tool.id)}
                 className="h-8 w-8 p-0"
@@ -129,7 +144,7 @@ export function AnnotationToolbar({
           {/* Stamps */}
           <div className="relative">
             <Button
-              variant={showStamps ? 'default' : 'outline'}
+              variant={showStamps ? "default" : "outline"}
               size="sm"
               onClick={() => setShowStamps(!showStamps)}
               className="h-8"
@@ -170,7 +185,7 @@ export function AnnotationToolbar({
               onClick={() => setShowColorPalette(!showColorPalette)}
               className="h-8 w-16 p-1"
             >
-              <div 
+              <div
                 className="w-full h-full rounded border"
                 style={{ backgroundColor: activeColor }}
               />
@@ -229,7 +244,9 @@ export function AnnotationToolbar({
               step={10}
               className="flex-1"
             />
-            <span className="text-xs w-8 text-center">{Math.round(activeOpacity * 100)}%</span>
+            <span className="text-xs w-8 text-center">
+              {Math.round(activeOpacity * 100)}%
+            </span>
           </div>
 
           <Separator orientation="vertical" className="h-8" />

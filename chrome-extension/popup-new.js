@@ -15,6 +15,11 @@ class ScreenRecorderPopup {
     this.gifCreator = null;
     this.featuresLoaded = false;
 
+    // Enhanced systems
+    this.performanceOptimizer = null;
+    this.enhancedCaptureSystem = null;
+    this.systemsLoaded = false;
+
     this.init();
   }
 
@@ -33,6 +38,10 @@ class ScreenRecorderPopup {
 
     // Temporarily disable feature module loading to ensure basic functionality works
     // this.loadFeatureModules();
+
+    // Initialize enhanced systems
+    this.initializeEnhancedSystems();
+
     console.log("Screen Recorder popup initialized successfully");
   }
 
@@ -65,13 +74,6 @@ class ScreenRecorderPopup {
   }
 
   enableAdvancedFeatures() {
-    // Enable annotation buttons
-    const annotationBtn = document.getElementById("recordWithAnnotations");
-    if (annotationBtn) {
-      annotationBtn.disabled = false;
-      annotationBtn.style.opacity = "1";
-    }
-
     // Enable watermark checkbox
     const watermarkCheckbox = document.getElementById("enableWatermark");
     if (watermarkCheckbox) {
@@ -91,6 +93,38 @@ class ScreenRecorderPopup {
     }
 
     console.log("Advanced features enabled in UI");
+  }
+
+  async initializeEnhancedSystems() {
+    try {
+      console.log("🚀 Initializing Enhanced Systems...");
+
+      // Load performance optimizer
+      await this.loadScript("performance-optimizer.js");
+
+      // Load enhanced capture system
+      await this.loadScript("enhanced-capture-system.js");
+
+      // Initialize systems
+      if (window.PerformanceOptimizer) {
+        this.performanceOptimizer = new window.PerformanceOptimizer();
+        console.log("🚀 Performance Optimizer initialized");
+      }
+
+      if (window.EnhancedCaptureSystem) {
+        this.enhancedCaptureSystem = new window.EnhancedCaptureSystem();
+        console.log("📸 Enhanced Capture System initialized");
+      }
+
+      this.systemsLoaded = true;
+      console.log("🚀 Enhanced Systems initialized successfully");
+    } catch (error) {
+      console.error("🚀 Error initializing Enhanced Systems:", error);
+      this.showNotification(
+        "Some enhanced features may not be available",
+        "warning"
+      );
+    }
   }
 
   // Helper method to check if we can inject scripts into a URL
@@ -126,15 +160,6 @@ class ScreenRecorderPopup {
     document
       .getElementById("startRecording")
       ?.addEventListener("click", () => this.startRecording());
-    document
-      .getElementById("recordCamera")
-      ?.addEventListener("click", () => this.recordCamera());
-    document
-      .getElementById("testCamera")
-      ?.addEventListener("click", () => this.testCamera());
-    document
-      .getElementById("recordWithAnnotations")
-      ?.addEventListener("click", () => this.recordWithAnnotations());
 
     // Capture mode buttons
     document
@@ -938,6 +963,40 @@ class ScreenRecorderPopup {
         currentWindow: true,
       });
 
+      // Use enhanced capture system if available
+      if (this.enhancedCaptureSystem) {
+        try {
+          const dataUrl = await this.enhancedCaptureSystem.capture("instant", {
+            format: "png",
+            quality: 100,
+          });
+
+          if (dataUrl) {
+            this.downloadImage(dataUrl, "screenshot");
+            this.updateStatus("Screenshot captured", "ready");
+            this.showNotification(
+              "Screenshot captured successfully!",
+              "success"
+            );
+          }
+        } catch (enhancedError) {
+          console.warn(
+            "Enhanced capture failed, using fallback:",
+            enhancedError
+          );
+          this.fallbackCapture();
+        }
+      } else {
+        this.fallbackCapture();
+      }
+    } catch (error) {
+      console.error("Error capturing screen:", error);
+      this.updateStatus("Error capturing screenshot", "ready");
+    }
+  }
+
+  fallbackCapture() {
+    try {
       chrome.tabs.captureVisibleTab(null, { format: "png" }, (dataUrl) => {
         if (dataUrl) {
           this.downloadImage(dataUrl, "screenshot");
@@ -1221,61 +1280,6 @@ class ScreenRecorderPopup {
     });
   }
 
-  showCameraPermissionHelp() {
-    // Create a detailed help popup
-    const helpDiv = document.createElement("div");
-    helpDiv.id = "camera-permission-help";
-    helpDiv.style.cssText = `
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background: #fff;
-      color: #333;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-      z-index: 10000;
-      max-width: 400px;
-      font-family: Arial, sans-serif;
-      border: 2px solid #f44336;
-    `;
-
-    helpDiv.innerHTML = `
-      <h3 style="margin: 0 0 15px 0; color: #f44336;">📹 Camera Permission Required</h3>
-      <p style="margin: 10px 0;"><strong>The extension needs camera access to record with camera.</strong></p>
-
-      <h4 style="margin: 15px 0 10px 0; color: #333;">How to Grant Permission:</h4>
-      <ol style="margin: 10px 0; padding-left: 20px;">
-        <li>Look for a <strong>camera icon 📹</strong> in your browser's address bar</li>
-        <li>Click the camera icon and select <strong>"Always allow"</strong></li>
-        <li>If no icon appears, go to <strong>Chrome Settings > Privacy > Camera</strong></li>
-        <li>Add this extension to the <strong>"Allowed"</strong> list</li>
-        <li>Refresh and try again</li>
-      </ol>
-
-      <div style="text-align: center; margin-top: 15px;">
-        <button onclick="document.body.removeChild(document.getElementById('camera-permission-help'))"
-                style="background: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
-          Got It
-        </button>
-        <button onclick="window.open('chrome://settings/content/camera', '_blank')"
-                style="background: #2196F3; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-left: 10px;">
-          Open Camera Settings
-        </button>
-      </div>
-    `;
-
-    document.body.appendChild(helpDiv);
-
-    // Auto-remove after 15 seconds
-    setTimeout(() => {
-      if (document.getElementById("camera-permission-help")) {
-        document.body.removeChild(helpDiv);
-      }
-    }, 15000);
-  }
-
   toggleSettings() {
     const content = document.getElementById("settingsContent");
     const isVisible = content.style.display !== "none";
@@ -1291,7 +1295,7 @@ class ScreenRecorderPopup {
       includeMicrophone: document.getElementById("includeMicrophone").checked,
       showCursor: document.getElementById("showCursor").checked,
       captureMode: this.captureMode || "fullscreen",
-      enableAnnotations: this.enableAnnotations || false,
+
       recordingTimer: this.recordingTimer || false,
       cursorHighlight: this.cursorHighlight || true,
       autoZoom: this.autoZoom || false,
@@ -1517,330 +1521,6 @@ class ScreenRecorderPopup {
   }
 
   // Enhanced recording methods
-  async recordCamera() {
-    try {
-      this.updateStatus("Starting camera recording...", "capturing");
-
-      let stream;
-      let constraints;
-
-      // Try multiple constraint levels with progressive fallback
-      const constraintLevels = [
-        // Level 1: High quality
-        {
-          video: {
-            width: { ideal: 1280, max: 1920 },
-            height: { ideal: 720, max: 1080 },
-            frameRate: { ideal: 30, max: 30 },
-          },
-          audio: this.getSettings().includeMicrophone,
-        },
-        // Level 2: Medium quality
-        {
-          video: {
-            width: { ideal: 640, max: 1280 },
-            height: { ideal: 480, max: 720 },
-            frameRate: { ideal: 30, max: 30 },
-          },
-          audio: this.getSettings().includeMicrophone,
-        },
-        // Level 3: Basic quality
-        {
-          video: {
-            width: 640,
-            height: 480,
-            frameRate: 30,
-          },
-          audio: this.getSettings().includeMicrophone,
-        },
-        // Level 4: Minimal constraints
-        {
-          video: true,
-          audio: this.getSettings().includeMicrophone,
-        },
-        // Level 5: Video only (no audio)
-        {
-          video: true,
-          audio: false,
-        },
-      ];
-
-      let lastError;
-      for (let i = 0; i < constraintLevels.length; i++) {
-        constraints = constraintLevels[i];
-        try {
-          console.log(`Trying camera constraints level ${i + 1}:`, constraints);
-          stream = await navigator.mediaDevices.getUserMedia(constraints);
-          console.log(
-            `Camera access successful with level ${i + 1} constraints`
-          );
-          break;
-        } catch (error) {
-          lastError = error;
-          console.warn(
-            `Camera constraints level ${i + 1} failed:`,
-            error.name,
-            error.message
-          );
-
-          // If this is the last attempt, throw the error
-          if (i === constraintLevels.length - 1) {
-            throw error;
-          }
-        }
-      }
-
-      if (!stream) {
-        throw lastError || new Error("Failed to get camera stream");
-      }
-
-      // Log successful stream info
-      const videoTrack = stream.getVideoTracks()[0];
-      const audioTrack = stream.getAudioTracks()[0];
-
-      if (videoTrack) {
-        const settings = videoTrack.getSettings();
-        console.log("Camera stream settings:", settings);
-        this.showNotification(
-          `Camera ready: ${settings.width}x${settings.height}`,
-          "success"
-        );
-      }
-
-      this.setupMediaRecorder(stream);
-      this.mediaRecorder.start();
-      this.isRecording = true;
-      this.recordingStartTime = Date.now();
-
-      this.updateUI();
-      this.startTimer();
-      this.updateStatus("Recording camera...", "recording");
-
-      chrome.runtime.sendMessage({
-        action: "recordingStarted",
-        settings: { ...this.getSettings(), recordingType: "camera" },
-      });
-    } catch (error) {
-      console.error("Error starting camera recording:", error);
-      this.updateStatus("Error accessing camera", "ready");
-
-      let errorMessage = "Failed to access camera. ";
-      let troubleshooting = "";
-
-      switch (error.name) {
-        case "NotAllowedError":
-          errorMessage += "Camera permission denied.";
-          troubleshooting =
-            "Please click the camera icon in your browser's address bar and allow camera access, then try again.";
-          break;
-        case "NotFoundError":
-          errorMessage += "No camera device found.";
-          troubleshooting =
-            "Please connect a camera to your computer and refresh the page.";
-          break;
-        case "NotReadableError":
-          errorMessage += "Camera is busy or hardware error.";
-          troubleshooting =
-            "Please close other applications using the camera (like Zoom, Skype, etc.) and try again.";
-          break;
-        case "OverconstrainedError":
-          errorMessage += "Camera doesn't support the requested settings.";
-          troubleshooting =
-            "Your camera may not support the video quality settings. This shouldn't happen with our fallback system.";
-          break;
-        case "SecurityError":
-          errorMessage += "Camera access blocked by security policy.";
-          troubleshooting =
-            "Please check your browser's camera permissions in Settings > Privacy and Security > Site Settings > Camera.";
-          break;
-        case "AbortError":
-          errorMessage += "Camera access was interrupted.";
-          troubleshooting =
-            "Please try again. If the problem persists, restart your browser.";
-          break;
-        case "TypeError":
-          errorMessage += "Browser doesn't support camera access.";
-          troubleshooting =
-            "Please use a modern browser like Chrome, Firefox, or Edge.";
-          break;
-        default:
-          errorMessage += `Unexpected error (${error.name || "Unknown"}).`;
-          troubleshooting = `Error details: ${
-            error.message || "No additional details"
-          }. Please check camera permissions and try again.`;
-      }
-
-      // Show detailed error message
-      this.showNotification(`${errorMessage} ${troubleshooting}`, "error");
-
-      // Also log detailed error for debugging
-      console.error("Detailed camera error:", {
-        name: error.name,
-        message: error.message,
-        constraint: error.constraint,
-        stack: error.stack,
-      });
-    }
-  }
-
-  async testCamera() {
-    try {
-      this.updateStatus("Testing camera access...", "capturing");
-
-      // Check if getUserMedia is available
-      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        throw new Error("Camera API not supported in this browser");
-      }
-
-      // Check available devices first
-      let devices;
-      try {
-        devices = await navigator.mediaDevices.enumerateDevices();
-        const videoDevices = devices.filter(
-          (device) => device.kind === "videoinput"
-        );
-        console.log("Available video devices:", videoDevices.length);
-
-        if (videoDevices.length === 0) {
-          throw new Error("No camera devices found");
-        }
-      } catch (deviceError) {
-        console.warn("Could not enumerate devices:", deviceError);
-        // Continue anyway, getUserMedia might still work
-      }
-
-      // Simple camera test with basic constraints
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: false,
-      });
-
-      // Get camera info
-      const videoTrack = stream.getVideoTracks()[0];
-      const settings = videoTrack.getSettings();
-      const capabilities = videoTrack.getCapabilities();
-
-      // Stop the stream immediately
-      stream.getTracks().forEach((track) => track.stop());
-
-      // Show success message with camera details
-      const cameraInfo = `Camera test successful!
-Device: ${videoTrack.label || "Unknown Camera"}
-Resolution: ${settings.width}x${settings.height}
-Frame Rate: ${settings.frameRate}fps`;
-
-      this.updateStatus("Camera test completed", "ready");
-      this.showNotification(cameraInfo, "success");
-
-      console.log("Camera test results:", {
-        label: videoTrack.label,
-        settings: settings,
-        capabilities: capabilities,
-      });
-    } catch (error) {
-      console.error("Camera test failed:", error);
-      this.updateStatus("Camera test failed", "ready");
-
-      let errorMessage = "Camera test failed. ";
-      let solution = "";
-
-      switch (error.name) {
-        case "NotAllowedError":
-          errorMessage += "Permission denied.";
-          solution =
-            "CAMERA PERMISSION DENIED - Follow these steps:\n\n" +
-            "1. Look for a camera icon in your browser's address bar and click it\n" +
-            "2. Select 'Always allow' for camera access\n" +
-            "3. If no icon appears, go to Chrome Settings > Privacy and Security > Site Settings > Camera\n" +
-            "4. Add this extension to the 'Allowed' list\n" +
-            "5. Refresh this page and try again\n\n" +
-            "Alternative: Try right-clicking in the browser address bar area to see permission options.";
-          break;
-        case "NotFoundError":
-          errorMessage += "No camera found.";
-          solution =
-            "Please connect a camera to your computer and try again. Check if your camera is working in other applications.";
-          break;
-        case "NotReadableError":
-          errorMessage += "Camera is busy or hardware error.";
-          solution =
-            "Please close other applications using the camera (Zoom, Skype, Teams, etc.) and try again. You may also need to restart your browser.";
-          break;
-        case "SecurityError":
-          errorMessage += "Camera access blocked by security policy.";
-          solution =
-            "Please check your browser's camera permissions in Settings > Privacy and Security > Site Settings > Camera.";
-          break;
-        case "AbortError":
-          errorMessage += "Camera access was interrupted.";
-          solution =
-            "Please try again. If the problem persists, restart your browser.";
-          break;
-        default:
-          if (error.message.includes("not supported")) {
-            errorMessage += "Camera API not supported.";
-            solution =
-              "Please use a modern browser like Chrome, Firefox, or Edge with camera support.";
-          } else if (error.message.includes("No camera devices")) {
-            errorMessage += "No camera devices detected.";
-            solution =
-              "Please connect a camera to your computer and ensure it's working properly.";
-          } else {
-            errorMessage += `Error: ${error.name || "Unknown"}`;
-            solution = `Error details: ${error.message}. Please check your camera connection and browser permissions.`;
-          }
-      }
-
-      this.showNotification(`${errorMessage} ${solution}`, "error");
-
-      // Show additional help for permission issues
-      if (error.name === "NotAllowedError") {
-        // Show immediate help
-        this.showCameraPermissionHelp();
-
-        // Show follow-up help
-        setTimeout(() => {
-          this.showNotification(
-            "CAMERA PERMISSION REQUIRED: This extension needs camera access to record with camera. Please grant permission in your browser settings.",
-            "info"
-          );
-        }, 2000);
-
-        // Show detailed help
-        setTimeout(() => {
-          this.showNotification(
-            "HELP: Look for a camera icon 📹 in your browser's address bar (next to the URL) and click it to grant camera permission.",
-            "info"
-          );
-        }, 5000);
-      }
-    }
-  }
-
-  async recordWithAnnotations() {
-    try {
-      this.updateStatus("Starting recording with annotations...", "capturing");
-
-      // Start normal recording first
-      await this.startRecording();
-
-      // For now, just show a notification that annotations are coming soon
-      this.showNotification(
-        "Recording started! Annotation features coming soon.",
-        "info"
-      );
-
-      // Close popup
-      window.close();
-    } catch (error) {
-      console.error("Error starting recording with annotations:", error);
-      this.updateStatus("Error starting annotated recording", "ready");
-      this.showNotification(
-        "Failed to start recording: " + error.message,
-        "error"
-      );
-    }
-  }
 
   // Enhanced capture methods
   async captureFullPage() {
@@ -2425,8 +2105,7 @@ Frame Rate: ${settings.frameRate}fps`;
       showCursor: document.getElementById("showCursor")?.checked || true,
       highlightCursor:
         document.getElementById("highlightCursor")?.checked || false,
-      enableAnnotations:
-        document.getElementById("enableAnnotations")?.checked || false,
+
       enableWatermark:
         document.getElementById("enableWatermark")?.checked || false,
       watermarkText:
